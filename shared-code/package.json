@@ -1,0 +1,25 @@
+{
+  "name": "shared-code",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "tsdown": "^0.22.14"
+  }
+}

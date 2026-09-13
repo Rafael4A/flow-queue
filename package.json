@@ -1,0 +1,24 @@
+{
+  "name": "flow-queue",
+  "version": "1.0.0",
+  "workspaces": [
+    "front-end",
+    "back-end",
+    "shared-code"
+  ],
+  "scripts": {
+    "front": "npm run -w=front-end",
+    "back": "npm run -w=back-end",
+    "shared": "npm run -w=shared-code",
+    "dev": "npm run -w=shared-code build && concurrently --names \"SHARED,FRONT,BACK\" --prefix-colors \"auto\" --timestamped false \"npm run -w=shared-code dev\" \"npm run -w=front-end dev\" \"npm run -w=back-end dev\"",
+    "build": "npm run -w=shared-code build && concurrently --names \"FRONT,BACK\" --prefix-colors \"auto\" --timestamped false \"npm run -w=front-end build\" \"npm run -w=back-end build\"",
+    "prod": "npm run build && npm run -w=back-end start",
+    "test": "npm run -w=shared-code build && npm run -w=shared-code test && npm run -w=front-end test && npm run -w=back-end test"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-musl": "4.62.5"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}

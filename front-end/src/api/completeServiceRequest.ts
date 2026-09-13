@@ -1,0 +1,26 @@
+import type { CompleteServiceRequestPayload, Ticket } from "shared-code";
+import type { APIError } from "../types";
+
+export async function completeServiceRequest(
+  args: CompleteServiceRequestPayload,
+): Promise<Ticket> {
+  return fetch("/api/desk/tickets/complete", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(args),
+    credentials: "include",
+  }).then((res) => {
+    if (!res.ok) {
+      return res.json().then((data) => {
+        const error = new Error(
+          data.error || "Failed to complete service",
+        ) as APIError;
+        error.status = res.status;
+        throw error;
+      });
+    }
+    return res.json();
+  });
+}
