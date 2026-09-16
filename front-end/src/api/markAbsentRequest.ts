@@ -1,8 +1,8 @@
-import type { MarkAbsentRequestPayload, Ticket } from "shared-code";
+import type { Ticket, TicketIdPayload } from "shared-code";
 import type { APIError } from "../types";
 
 export async function markAbsentRequest(
-  args: MarkAbsentRequestPayload,
+  args: TicketIdPayload,
 ): Promise<Ticket> {
   return fetch("/api/desk/tickets/mark-absent", {
     method: "POST",

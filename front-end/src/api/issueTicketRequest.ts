@@ -1,8 +1,8 @@
-import type { IssueTicketRequestPayload, Ticket } from "shared-code";
+import type { Ticket, TicketTypePayload } from "shared-code";
 import type { APIError } from "../types";
 
 export async function issueTicketRequest(
-  args: IssueTicketRequestPayload,
+  args: TicketTypePayload,
 ): Promise<Ticket> {
   return fetch("/api/totem/tickets/issue", {
     method: "POST",

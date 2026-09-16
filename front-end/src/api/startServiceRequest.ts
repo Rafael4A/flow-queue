@@ -1,8 +1,8 @@
-import type { StartServiceRequestPayload, Ticket } from "shared-code";
+import type { Ticket, TicketIdPayload } from "shared-code";
 import type { APIError } from "../types";
 
 export async function startServiceRequest(
-  args: StartServiceRequestPayload,
+  args: TicketIdPayload,
 ): Promise<Ticket> {
   return fetch("/api/desk/tickets/start", {
     method: "POST",

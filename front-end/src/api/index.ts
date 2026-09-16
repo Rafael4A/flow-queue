@@ -1,5 +1,6 @@
 export * from "./callNextRequest";
 export * from "./completeServiceRequest";
+export * from "./getDeskTicketRequest";
 export * from "./getPublicQueueRequest";
 export * from "./issueTicketRequest";
 export * from "./logInRequest";

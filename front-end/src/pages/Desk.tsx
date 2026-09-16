@@ -1,9 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import type { Ticket } from "shared-code";
+import { useNavigate } from "react-router";
+import { USER_ROLE } from "shared-code";
 import {
   callNextRequest,
   completeServiceRequest,
+  getDeskTicketRequest,
   markAbsentRequest,
   repeatCallRequest,
   requeueRequest,
@@ -12,40 +14,55 @@ import {
 import { useAuthContext, useQueueContext } from "../contexts";
 
 export function Desk() {
-  const { queue, isLoading } = useQueueContext();
   const { auth } = useAuthContext();
+  const navigate = useNavigate();
 
-  const [currentTicket, setCurrentTicket] = useState<Ticket>();
+  if (auth?.role !== USER_ROLE.DESK) {
+    navigate("/login");
+  }
+
+  const { queue, isLoading } = useQueueContext();
+
+  const currentTicketQuery = useQuery({
+    queryKey: ["currentTicket"],
+    queryFn: () => getDeskTicketRequest(),
+  });
+
+  const currentTicket = currentTicketQuery.data;
+
+  const [requeueTicketId, setRequeueTicketId] = useState("");
 
   const callNextMutation = useMutation({
     mutationFn: callNextRequest,
-    onSuccess: (data) =>
-      setCurrentTicket((data as any)?.message ? undefined : (data as Ticket)),
+    onSuccess: () => currentTicketQuery.refetch(),
   });
 
   const repeatCallMutation = useMutation({
     mutationFn: repeatCallRequest,
-    onSuccess: (data) => setCurrentTicket(data),
+    onSuccess: () => currentTicketQuery.refetch(),
   });
 
   const markAbsentMutation = useMutation({
     mutationFn: markAbsentRequest,
-    onSuccess: (data) => setCurrentTicket(data),
+    onSuccess: () => currentTicketQuery.refetch(),
   });
 
   const startServiceMutation = useMutation({
     mutationFn: startServiceRequest,
-    onSuccess: (data) => setCurrentTicket(data),
+    onSuccess: () => currentTicketQuery.refetch(),
   });
 
   const completeServiceMutation = useMutation({
     mutationFn: completeServiceRequest,
-    onSuccess: (data) => setCurrentTicket(data),
+    onSuccess: () => currentTicketQuery.refetch(),
   });
 
   const requeueMutation = useMutation({
     mutationFn: requeueRequest,
-    onSuccess: (data) => setCurrentTicket(data),
+    onSuccess: (_data) => {
+      setRequeueTicketId("");
+      currentTicketQuery.refetch();
+    }, // avisar que foi requeuado?
   });
 
   if (isLoading) {
@@ -62,14 +79,15 @@ export function Desk() {
 
       {currentTicket ? (
         <p>
-          Current Ticket: {currentTicket.id} - Type: {currentTicket.type}
+          Current Ticket: {currentTicket.id} - Type: {currentTicket.type} - Call
+          Count: {currentTicket.callCount} - Status: {currentTicket.status}
         </p>
       ) : (
         <p>No current ticket</p>
       )}
 
       <button
-        onClick={() => callNextMutation.mutate({ deskId: auth?.deskId || "" })}
+        onClick={() => callNextMutation.mutate()}
         disabled={isLoading || callNextMutation.isPending}
       >
         Call Next
@@ -77,10 +95,7 @@ export function Desk() {
 
       <button
         onClick={() =>
-          repeatCallMutation.mutate({
-            deskId: auth?.deskId || "",
-            ticketId: currentTicket?.id || "",
-          })
+          repeatCallMutation.mutate({ ticketId: currentTicket?.id || "" })
         }
         disabled={isLoading || repeatCallMutation.isPending}
       >
@@ -89,10 +104,7 @@ export function Desk() {
 
       <button
         onClick={() =>
-          markAbsentMutation.mutate({
-            deskId: auth?.deskId || "",
-            ticketId: currentTicket?.id || "",
-          })
+          markAbsentMutation.mutate({ ticketId: currentTicket?.id || "" })
         }
         disabled={isLoading || markAbsentMutation.isPending}
       >
@@ -101,10 +113,7 @@ export function Desk() {
 
       <button
         onClick={() =>
-          startServiceMutation.mutate({
-            deskId: auth?.deskId || "",
-            ticketId: currentTicket?.id || "",
-          })
+          startServiceMutation.mutate({ ticketId: currentTicket?.id || "" })
         }
         disabled={isLoading || startServiceMutation.isPending}
       >
@@ -113,22 +122,22 @@ export function Desk() {
 
       <button
         onClick={() =>
-          completeServiceMutation.mutate({
-            deskId: auth?.deskId || "",
-            ticketId: currentTicket?.id || "",
-          })
+          completeServiceMutation.mutate({ ticketId: currentTicket?.id || "" })
         }
         disabled={isLoading || completeServiceMutation.isPending}
       >
         Complete Service
       </button>
 
+      <input
+        type="text"
+        placeholder="Requeue Ticket ID"
+        value={requeueTicketId}
+        onChange={(e) => setRequeueTicketId(e.target.value)}
+      />
+
       <button
-        onClick={() =>
-          requeueMutation.mutate({
-            ticketId: currentTicket?.id || "",
-          })
-        }
+        onClick={() => requeueMutation.mutate({ ticketId: requeueTicketId })}
         disabled={isLoading || requeueMutation.isPending}
       >
         Requeue

@@ -1,9 +1,7 @@
-import type { RequeueTicketRequestPayload, Ticket } from "shared-code";
+import type { Ticket, TicketIdPayload } from "shared-code";
 import type { APIError } from "../types";
 
-export async function requeueRequest(
-  args: RequeueTicketRequestPayload,
-): Promise<Ticket> {
+export async function requeueRequest(args: TicketIdPayload): Promise<Ticket> {
   return fetch("/api/desk/tickets/requeue", {
     method: "POST",
     headers: {

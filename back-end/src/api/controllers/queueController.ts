@@ -4,6 +4,7 @@ import { SOCKETIO_KEY } from "../constants";
 import {
   callNext,
   completeService,
+  getDeskTicket,
   getPublicState,
   issueTicket,
   markAbsent,
@@ -14,6 +15,16 @@ import {
 
 export function getPublicStateController(req: Request, res: Response) {
   return res.status(200).json(getPublicState());
+}
+
+export function getDeskTicketController(req: Request, res: Response) {
+  const deskId = req.user?.deskId as string;
+  if (!deskId || typeof deskId !== "string") {
+    return res.status(400).json({ message: "deskId is missing or invalid" });
+  }
+
+  const deskTicket = getDeskTicket(deskId);
+  return res.status(200).json(deskTicket);
 }
 
 export function issueTicketController(req: Request, res: Response) {
@@ -32,7 +43,7 @@ export function issueTicketController(req: Request, res: Response) {
 }
 
 export function callNextController(req: Request, res: Response) {
-  const deskId = req.body?.deskId as string;
+  const deskId = req.user?.deskId as string;
   if (!deskId || typeof deskId !== "string") {
     return res.status(400).json({ message: "deskId is missing or invalid" });
   }
@@ -53,7 +64,7 @@ export function callNextController(req: Request, res: Response) {
 }
 
 export function repeatCallController(req: Request, res: Response) {
-  const deskId = req.body?.deskId as string;
+  const deskId = req.user?.deskId as string;
   const ticketId = req.body?.ticketId as string;
   if (!deskId || typeof deskId !== "string") {
     return res.status(400).json({ message: "deskId is missing or invalid" });
@@ -74,7 +85,7 @@ export function repeatCallController(req: Request, res: Response) {
 }
 
 export function markAbsentController(req: Request, res: Response) {
-  const deskId = req.body?.deskId as string;
+  const deskId = req.user?.deskId as string;
   const ticketId = req.body?.ticketId as string;
   if (!deskId || typeof deskId !== "string") {
     return res.status(400).json({ message: "deskId is missing or invalid" });
@@ -108,7 +119,7 @@ export function requeueController(req: Request, res: Response) {
 }
 
 export function startServiceController(req: Request, res: Response) {
-  const deskId = req.body?.deskId as string;
+  const deskId = req.user?.deskId as string;
   const ticketId = req.body?.ticketId as string;
   if (!deskId || typeof deskId !== "string") {
     return res.status(400).json({ message: "deskId is missing or invalid" });
@@ -127,7 +138,7 @@ export function startServiceController(req: Request, res: Response) {
 }
 
 export function completeServiceController(req: Request, res: Response) {
-  const deskId = req.body?.deskId as string;
+  const deskId = req.user?.deskId as string;
   const ticketId = req.body?.ticketId as string;
   if (!deskId || typeof deskId !== "string") {
     return res.status(400).json({ message: "deskId is missing or invalid" });

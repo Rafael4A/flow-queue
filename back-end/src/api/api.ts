@@ -3,6 +3,7 @@ import { USER_ROLE } from "shared-code";
 import {
   callNextController,
   completeServiceController,
+  getDeskTicketController,
   getPublicStateController,
   issueTicketController,
   login,
@@ -15,48 +16,29 @@ import { requireRole, verifyJwt } from "./middlewares";
 
 export const apiRouter = express.Router();
 
+// Public routes
 apiRouter.post("/auth/login", login);
 
 apiRouter.get("/queue/public", getPublicStateController);
-apiRouter.post(
-  "/totem/tickets/issue",
-  verifyJwt,
-  requireRole([USER_ROLE.TOTEM]),
-  issueTicketController,
-);
-apiRouter.post(
-  "/desk/tickets/call-next",
-  verifyJwt,
-  requireRole([USER_ROLE.DESK]),
-  callNextController,
-);
-apiRouter.post(
-  "/desk/tickets/repeat",
-  verifyJwt,
-  requireRole([USER_ROLE.DESK]),
-  repeatCallController,
-);
-apiRouter.post(
-  "/desk/tickets/start",
-  verifyJwt,
-  requireRole([USER_ROLE.DESK]),
-  startServiceController,
-);
-apiRouter.post(
-  "/desk/tickets/complete",
-  verifyJwt,
-  requireRole([USER_ROLE.DESK]),
-  completeServiceController,
-);
-apiRouter.post(
-  "/desk/tickets/absent",
-  verifyJwt,
-  requireRole([USER_ROLE.DESK]),
-  markAbsentController,
-);
-apiRouter.post(
-  "/desk/tickets/requeue",
-  verifyJwt,
-  requireRole([USER_ROLE.DESK]),
-  requeueController,
-);
+
+// Totem routes
+const totemRouter = express.Router();
+totemRouter.use(verifyJwt, requireRole([USER_ROLE.TOTEM]));
+
+totemRouter.post("/tickets/issue", issueTicketController);
+
+apiRouter.use("/totem", totemRouter);
+
+// Desk routes
+const deskRouter = express.Router();
+deskRouter.use(verifyJwt, requireRole([USER_ROLE.DESK]));
+
+deskRouter.get("/ticket", getDeskTicketController);
+deskRouter.post("/tickets/call-next", callNextController);
+deskRouter.post("/tickets/repeat", repeatCallController);
+deskRouter.post("/tickets/start", startServiceController);
+deskRouter.post("/tickets/complete", completeServiceController);
+deskRouter.post("/tickets/mark-absent", markAbsentController);
+deskRouter.post("/tickets/requeue", requeueController);
+
+apiRouter.use("/desk", deskRouter);

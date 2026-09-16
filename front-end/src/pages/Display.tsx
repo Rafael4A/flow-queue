@@ -1,3 +1,4 @@
+import { TICKET_STATUS } from "shared-code";
 import { useQueueContext } from "../contexts";
 
 export function Display() {
@@ -21,6 +22,7 @@ export function Display() {
           <li key={ticket.id}>
             {ticket.id} - Called At:{" "}
             {ticket.calledAt?.toLocaleString() || "N/A"}
+            {ticket.status === TICKET_STATUS.ABSENT && " (Absent)"}
           </li>
         ))}
       </ul>

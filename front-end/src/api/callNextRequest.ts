@@ -1,15 +1,12 @@
-import type { CallNextRequestPayload, Ticket } from "shared-code";
+import type { Ticket } from "shared-code";
 import type { APIError } from "../types";
 
-export async function callNextRequest(
-  args: CallNextRequestPayload,
-): Promise<Ticket | { message: string }> {
+export async function callNextRequest(): Promise<Ticket | { message: string }> {
   return fetch("/api/desk/tickets/call-next", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(args),
     credentials: "include",
   }).then((res) => {
     if (!res.ok) {

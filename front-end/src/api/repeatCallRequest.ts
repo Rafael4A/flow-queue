@@ -1,8 +1,8 @@
-import type { RepeatCallRequestPayload, Ticket } from "shared-code";
+import type { Ticket, TicketIdPayload } from "shared-code";
 import type { APIError } from "../types";
 
 export async function repeatCallRequest(
-  args: RepeatCallRequestPayload,
+  args: TicketIdPayload,
 ): Promise<Ticket> {
   return fetch("/api/desk/tickets/repeat", {
     method: "POST",

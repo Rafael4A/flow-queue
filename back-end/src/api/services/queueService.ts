@@ -28,17 +28,20 @@ export function issueTicket(type: TicketType): Ticket {
   return ticket;
 }
 
-export function callNext(deskId: string): Ticket | undefined {
-  const prohibitedStatuses = [
+export function getDeskTicket(deskId: string): Ticket | undefined {
+  const workingStatuses = [
     TICKET_STATUS.CALLED,
     TICKET_STATUS.IN_PROGRESS,
   ] as TicketStatus[];
 
-  const deskHasTicket = state.tickets.find(
+  return state.tickets.find(
     (ticket) =>
-      ticket.deskId === deskId && prohibitedStatuses.includes(ticket.status),
+      ticket.deskId === deskId && workingStatuses.includes(ticket.status),
   );
+}
 
+export function callNext(deskId: string): Ticket | undefined {
+  const deskHasTicket = getDeskTicket(deskId) !== undefined;
   if (deskHasTicket) {
     throw new Error(
       `Desk ${deskId} already has a ticket in progress or called.`,
@@ -201,8 +204,7 @@ export function completeService(ticketId: string, deskId: string): Ticket {
 export function getPublicState(): PublicQueueView {
   const statusesToFilter: TicketStatus[] = [
     TICKET_STATUS.CALLED,
-    TICKET_STATUS.IN_PROGRESS,
-    TICKET_STATUS.COMPLETED,
+    TICKET_STATUS.ABSENT,
   ]; //TODO CHECK IF THESE ARE THE CORRECT STATUSES -> CONSIDER THE FILTER BY CALLED AT
 
   const filteredTickets = state.tickets
