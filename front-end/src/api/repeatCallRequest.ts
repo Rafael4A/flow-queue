@@ -15,7 +15,7 @@ export async function repeatCallRequest(
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
-          data.error || "Failed to repeat call",
+          data.message || "Failed to repeat call",
         ) as APIError;
         error.status = res.status;
         throw error;

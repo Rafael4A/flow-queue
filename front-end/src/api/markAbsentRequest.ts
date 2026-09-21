@@ -15,7 +15,7 @@ export async function markAbsentRequest(
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
-          data.error || "Failed to mark absent",
+          data.message || "Failed to mark absent",
         ) as APIError;
         error.status = res.status;
         throw error;

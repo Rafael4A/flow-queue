@@ -6,7 +6,7 @@ export async function getDeskTicketRequest(): Promise<Ticket | undefined> {
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
-          data.error || "Failed to fetch room",
+          data.message || "Failed to fetch room",
         ) as APIError;
         error.status = res.status;
         throw error;

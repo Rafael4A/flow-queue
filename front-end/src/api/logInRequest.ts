@@ -13,7 +13,7 @@ export async function logInRequest(
   }).then((res) => {
     if (!res.ok) {
       return res.json().then((data) => {
-        const error = new Error(data.error || "Failed to log in") as APIError;
+        const error = new Error(data.message || "Failed to log in") as APIError;
         error.status = res.status;
         throw error;
       });

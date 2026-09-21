@@ -15,7 +15,7 @@ export async function issueTicketRequest(
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
-          data.error || "Failed to issue ticket",
+          data.message || "Failed to issue ticket",
         ) as APIError;
         error.status = res.status;
         throw error;

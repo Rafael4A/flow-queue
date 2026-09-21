@@ -13,7 +13,7 @@ export async function requeueRequest(args: TicketIdPayload): Promise<Ticket> {
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
-          data.error || "Failed to requeue ticket",
+          data.message || "Failed to requeue ticket",
         ) as APIError;
         error.status = res.status;
         throw error;

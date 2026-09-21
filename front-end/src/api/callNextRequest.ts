@@ -12,7 +12,7 @@ export async function callNextRequest(): Promise<Ticket | { message: string }> {
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
-          data.error || "Failed to call next ticket",
+          data.message || "Failed to call next ticket",
         ) as APIError;
         error.status = res.status;
         throw error;

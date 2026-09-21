@@ -15,7 +15,7 @@ export async function startServiceRequest(
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
-          data.error || "Failed to start service",
+          data.message || "Failed to start service",
         ) as APIError;
         error.status = res.status;
         throw error;

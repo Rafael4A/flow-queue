@@ -12,6 +12,7 @@ import {
   startServiceRequest,
 } from "../api";
 import { useAuthContext, useQueueContext } from "../contexts";
+import { useSnackAlert } from "../contexts/useSnackAlert";
 
 export function Desk() {
   const { auth } = useAuthContext();
@@ -20,6 +21,8 @@ export function Desk() {
   if (auth?.role !== USER_ROLE.DESK) {
     navigate("/login");
   }
+
+  const { openAlert } = useSnackAlert();
 
   const { queue, isLoading } = useQueueContext();
 
@@ -59,10 +62,14 @@ export function Desk() {
 
   const requeueMutation = useMutation({
     mutationFn: requeueRequest,
-    onSuccess: (_data) => {
+    onSuccess: (data) => {
       setRequeueTicketId("");
       currentTicketQuery.refetch();
-    }, // avisar que foi requeuado?
+      openAlert({
+        content: `Ticket ${data.id} requeued successfully`,
+        severity: "success",
+      });
+    },
   });
 
   if (isLoading) {

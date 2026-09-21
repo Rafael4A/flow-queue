@@ -4,10 +4,12 @@ import { useNavigate } from "react-router";
 import { TICKET_TYPE, USER_ROLE } from "shared-code";
 import { issueTicketRequest } from "../api";
 import { useAuthContext, useQueueContext } from "../contexts";
+import { useSnackAlert } from "../contexts/useSnackAlert";
 
 export function Totem() {
   const navigate = useNavigate();
   const { auth } = useAuthContext();
+  const { openAlert } = useSnackAlert();
 
   if (auth?.role !== USER_ROLE.TOTEM) {
     navigate("/login");
@@ -15,7 +17,11 @@ export function Totem() {
 
   const issueTicketMutation = useMutation({
     mutationFn: issueTicketRequest,
-    onSuccess: () => alert("Ticket issued successfully!"), // TODO TOAST/SNACK?
+    onSuccess: () =>
+      openAlert({
+        content: "Ticket issued successfully!",
+        severity: "success",
+      }),
   });
 
   const { queue, isLoading } = useQueueContext();

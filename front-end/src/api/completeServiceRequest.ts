@@ -15,7 +15,7 @@ export async function completeServiceRequest(
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
-          data.error || "Failed to complete service",
+          data.message || "Failed to complete service",
         ) as APIError;
         error.status = res.status;
         throw error;
