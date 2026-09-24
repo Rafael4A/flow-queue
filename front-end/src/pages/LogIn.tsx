@@ -1,5 +1,13 @@
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { USER_ROLE } from "shared-code";
@@ -24,29 +32,75 @@ export function LogIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleSubmit = (e: React.SubmitEvent) => {
+    e.preventDefault();
+    logInMutation.mutate({ username, password });
+  };
+
   return (
-    <div>
-      <h1>Login</h1>
+    <Container
+      maxWidth="sm"
+      sx={{ height: "100vh", display: "flex", alignItems: "center" }}
+    >
+      <Box sx={{ width: "100%" }}>
+        <Typography
+          variant="h3"
+          sx={{
+            fontWeight: 700,
+            color: "primary.main",
+            textAlign: "center",
+            mb: 1,
+          }}
+        >
+          Sign In
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ textAlign: "center", mb: 4 }}
+        >
+          Enter your credentials to continue
+        </Typography>
 
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      <button
-        onClick={() => logInMutation.mutate({ username, password })}
-        disabled={logInMutation.isPending}
-      >
-        Log In
-      </button>
-    </div>
+        <Card>
+          <CardContent sx={{ p: 4 }}>
+            <form onSubmit={handleSubmit}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+                <TextField
+                  label="Username"
+                  type="text"
+                  fullWidth
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  variant="outlined"
+                  disabled={logInMutation.isPending}
+                />
+                <TextField
+                  label="Password"
+                  type="password"
+                  fullWidth
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  variant="outlined"
+                  disabled={logInMutation.isPending}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  size="large"
+                  disabled={logInMutation.isPending || !username || !password}
+                  sx={{ py: 1.5, fontWeight: 600 }}
+                >
+                  {logInMutation.isPending ? "Signing in..." : "Sign In"}
+                </Button>
+              </Box>
+            </form>
+          </CardContent>
+        </Card>
+      </Box>
+    </Container>
   );
 }

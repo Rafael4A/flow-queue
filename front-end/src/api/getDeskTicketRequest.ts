@@ -1,8 +1,8 @@
 import type { Ticket } from "shared-code";
 import type { APIError } from "../types";
 
-export async function getDeskTicketRequest(): Promise<Ticket | undefined> {
-  return fetch("/api/desk/ticket ").then((res) => {
+export async function getDeskTicketRequest(): Promise<Ticket | null> {
+  return fetch("/api/desk/ticket").then((res) => {
     if (!res.ok) {
       return res.json().then((data) => {
         const error = new Error(
@@ -12,6 +12,7 @@ export async function getDeskTicketRequest(): Promise<Ticket | undefined> {
         throw error;
       });
     }
-    return res.json();
+
+    return res.json().catch(() => null);
   });
 }

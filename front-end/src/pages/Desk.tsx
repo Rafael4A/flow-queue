@@ -1,3 +1,26 @@
+import {
+  AddCircle,
+  AssignmentTurnedIn,
+  Cancel,
+  CheckCircle,
+  PlayArrow,
+  Replay,
+} from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Container,
+  Divider,
+  IconButton,
+  Paper,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -13,6 +36,7 @@ import {
 } from "../api";
 import { useAuthContext, useQueueContext } from "../contexts";
 import { useSnackAlert } from "../contexts/useSnackAlert";
+import { ticketStatusToText } from "../utils";
 
 export function Desk() {
   const { auth } = useAuthContext();
@@ -37,7 +61,11 @@ export function Desk() {
 
   const callNextMutation = useMutation({
     mutationFn: callNextRequest,
-    onSuccess: () => currentTicketQuery.refetch(),
+    onSuccess: (data: any) => {
+      if (data?.message)
+        openAlert({ content: data.message, severity: "success" });
+      currentTicketQuery.refetch();
+    },
   });
 
   const repeatCallMutation = useMutation({
@@ -73,82 +101,203 @@ export function Desk() {
   });
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <Container maxWidth="md" sx={{ mt: 8, textAlign: "center" }}>
+        <Typography variant="h6" color="text.secondary">
+          Loading...
+        </Typography>
+      </Container>
+    );
   }
 
+  const waitingTickets = queue?.waitingTickets;
+
   return (
-    <div>
-      <h1>Desk</h1>
-      <p>
-        Waiting Tickets: Standard: {queue?.waitingTickets?.CONVENTIONAL || 0},
-        Priority: {queue?.waitingTickets?.PRIORITY || 0}
-      </p>
-
-      {currentTicket ? (
-        <p>
-          Current Ticket: {currentTicket.id} - Type: {currentTicket.type} - Call
-          Count: {currentTicket.callCount} - Status: {currentTicket.status}
-        </p>
-      ) : (
-        <p>No current ticket</p>
-      )}
-
-      <button
-        onClick={() => callNextMutation.mutate()}
-        disabled={isLoading || callNextMutation.isPending}
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Typography
+        variant="h4"
+        sx={{ fontWeight: 700, color: "primary.main", mb: 3 }}
       >
-        Call Next
-      </button>
+        Staff Desk
+      </Typography>
 
-      <button
-        onClick={() =>
-          repeatCallMutation.mutate({ ticketId: currentTicket?.id || "" })
-        }
-        disabled={isLoading || repeatCallMutation.isPending}
-      >
-        Repeat Call
-      </button>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Paper sx={{ p: 2.5, display: "flex", gap: 2, flexWrap: "wrap" }}>
+          <Chip
+            label={`Standard: ${waitingTickets?.CONVENTIONAL || 0}`}
+            color="primary"
+            variant="outlined"
+          />
+          <Chip
+            label={`Priority: ${waitingTickets?.PRIORITY || 0}`}
+            color="warning"
+            variant="outlined"
+          />
+        </Paper>
 
-      <button
-        onClick={() =>
-          markAbsentMutation.mutate({ ticketId: currentTicket?.id || "" })
-        }
-        disabled={isLoading || markAbsentMutation.isPending}
-      >
-        Mark Absent
-      </button>
+        <Card
+          sx={{
+            bgcolor: currentTicket ? "primary.main" : "grey.100",
+            color: currentTicket ? "white" : "text.secondary",
+          }}
+        >
+          <CardContent>
+            <Typography variant="subtitle1" sx={{ opacity: 0.9, mb: 1 }}>
+              Current Ticket{" "}
+              {currentTicket
+                ? `(${ticketStatusToText(currentTicket.status)})`
+                : ""}
+            </Typography>
+            {currentTicket ? (
+              <>
+                <Typography
+                  variant="h1"
+                  sx={{ fontWeight: 800, fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
+                >
+                  {currentTicket.id}
+                </Typography>
+                <Divider sx={{ my: 2, bgcolor: "rgba(255,255,255,0.2)" }} />
+                <Typography variant="body2" sx={{ opacity: 0.85 }}>
+                  {currentTicket.type} &middot; Call #{currentTicket.callCount}
+                </Typography>
+              </>
+            ) : (
+              <Typography variant="h6">No current ticket</Typography>
+            )}
+          </CardContent>
+        </Card>
 
-      <button
-        onClick={() =>
-          startServiceMutation.mutate({ ticketId: currentTicket?.id || "" })
-        }
-        disabled={isLoading || startServiceMutation.isPending}
-      >
-        Start Service
-      </button>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          Actions
+        </Typography>
 
-      <button
-        onClick={() =>
-          completeServiceMutation.mutate({ ticketId: currentTicket?.id || "" })
-        }
-        disabled={isLoading || completeServiceMutation.isPending}
-      >
-        Complete Service
-      </button>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
+          <Tooltip title="Call Next Ticket">
+            <Button
+              sx={{
+                flex: 1,
+                minWidth: 140,
+                py: 2,
+                bgcolor: "primary.main",
+                "&:hover": { bgcolor: "primary.dark" },
+              }}
+              variant="contained"
+              color="primary"
+              startIcon={<PlayArrow />}
+              onClick={() => callNextMutation.mutate()}
+              disabled={callNextMutation.isPending}
+            >
+              Call Next
+            </Button>
+          </Tooltip>
 
-      <input
-        type="text"
-        placeholder="Requeue Ticket ID"
-        value={requeueTicketId}
-        onChange={(e) => setRequeueTicketId(e.target.value)}
-      />
+          <Tooltip title="Repeat Call">
+            <Button
+              sx={{ flex: 1, minWidth: 140, py: 2 }}
+              variant="outlined"
+              startIcon={<Replay />}
+              onClick={() =>
+                repeatCallMutation.mutate({
+                  ticketId: currentTicket?.id || "",
+                })
+              }
+              disabled={!currentTicket || repeatCallMutation.isPending}
+            >
+              Repeat Call
+            </Button>
+          </Tooltip>
 
-      <button
-        onClick={() => requeueMutation.mutate({ ticketId: requeueTicketId })}
-        disabled={isLoading || requeueMutation.isPending}
-      >
-        Requeue
-      </button>
-    </div>
+          <Tooltip title="Mark Absent">
+            <Button
+              sx={{ flex: 1, minWidth: 140, py: 2 }}
+              variant="outlined"
+              color="error"
+              startIcon={<Cancel />}
+              onClick={() =>
+                markAbsentMutation.mutate({
+                  ticketId: currentTicket?.id || "",
+                })
+              }
+              disabled={!currentTicket || markAbsentMutation.isPending}
+            >
+              Mark Absent
+            </Button>
+          </Tooltip>
+
+          <Tooltip title="Start Service">
+            <Button
+              sx={{ flex: 1, minWidth: 140, py: 2 }}
+              variant="outlined"
+              color="success"
+              startIcon={<CheckCircle />}
+              onClick={() =>
+                startServiceMutation.mutate({
+                  ticketId: currentTicket?.id || "",
+                })
+              }
+              disabled={!currentTicket || startServiceMutation.isPending}
+            >
+              Start Service
+            </Button>
+          </Tooltip>
+
+          <Tooltip title="Complete Service">
+            <Button
+              sx={{ flex: 1, minWidth: 140, py: 2 }}
+              variant="outlined"
+              startIcon={<AssignmentTurnedIn />}
+              onClick={() =>
+                completeServiceMutation.mutate({
+                  ticketId: currentTicket?.id || "",
+                })
+              }
+              disabled={!currentTicket || completeServiceMutation.isPending}
+            >
+              Complete
+            </Button>
+          </Tooltip>
+
+          <Stack direction="column" sx={{ width: "100%", gap: 1 }}>
+            <Typography>Requeue Ticket:</Typography>
+            <Box sx={{ display: "flex", gap: 1, flex: 1, minWidth: 140 }}>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Ticket ID"
+                value={requeueTicketId}
+                onChange={(e) =>
+                  setRequeueTicketId(e.target.value.toLocaleUpperCase())
+                }
+                disabled={requeueMutation.isPending}
+                variant="outlined"
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              />
+              <Tooltip title="Requeue Ticket">
+                <IconButton
+                  color="primary"
+                  onClick={() =>
+                    requeueMutation.mutate({ ticketId: requeueTicketId })
+                  }
+                  disabled={!requeueTicketId || requeueMutation.isPending}
+                  sx={{
+                    bgcolor: "primary.main",
+                    color: "white",
+                    "&:hover": { bgcolor: "primary.dark" },
+                  }}
+                >
+                  <AddCircle />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Stack>
+        </Box>
+      </Box>
+    </Container>
   );
 }

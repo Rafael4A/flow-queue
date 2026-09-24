@@ -211,8 +211,12 @@ export function getPublicState(): PublicQueueView {
     .filter((t) => statusesToFilter.includes(t.status) && !!t.calledAt)
     .toSorted(timePropSort("calledAt", false));
 
-  const currentTicket = filteredTickets[0];
-  const recentCalls = filteredTickets.slice(1, 6);
+  const currentTicket =
+    filteredTickets[0]?.status === TICKET_STATUS.CALLED
+      ? filteredTickets[0]
+      : undefined;
+  const recentCallsSliceRanges = currentTicket ? [1, 6] : [0, 5];
+  const recentCalls = filteredTickets.slice(...recentCallsSliceRanges);
 
   const waitingTickets = state.tickets.reduce<Record<TicketType, number>>(
     (acc, t) => ({
