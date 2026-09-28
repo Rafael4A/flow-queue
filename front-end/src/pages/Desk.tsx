@@ -24,7 +24,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { USER_ROLE } from "shared-code";
+import { TICKET_STATUS, USER_ROLE } from "shared-code";
 import {
   callNextRequest,
   completeServiceRequest,
@@ -191,7 +191,7 @@ export function Desk() {
               color="primary"
               startIcon={<PlayArrow />}
               onClick={() => callNextMutation.mutate()}
-              disabled={callNextMutation.isPending}
+              disabled={callNextMutation.isPending || !!currentTicket}
             >
               Call Next
             </Button>
@@ -207,7 +207,12 @@ export function Desk() {
                   ticketId: currentTicket?.id || "",
                 })
               }
-              disabled={!currentTicket || repeatCallMutation.isPending}
+              disabled={
+                !currentTicket ||
+                repeatCallMutation.isPending ||
+                currentTicket?.callCount >= 3 ||
+                currentTicket?.status !== TICKET_STATUS.CALLED
+              }
             >
               Repeat Call
             </Button>
@@ -224,7 +229,11 @@ export function Desk() {
                   ticketId: currentTicket?.id || "",
                 })
               }
-              disabled={!currentTicket || markAbsentMutation.isPending}
+              disabled={
+                !currentTicket ||
+                markAbsentMutation.isPending ||
+                currentTicket?.status !== TICKET_STATUS.CALLED
+              }
             >
               Mark Absent
             </Button>
@@ -241,7 +250,11 @@ export function Desk() {
                   ticketId: currentTicket?.id || "",
                 })
               }
-              disabled={!currentTicket || startServiceMutation.isPending}
+              disabled={
+                !currentTicket ||
+                startServiceMutation.isPending ||
+                currentTicket?.status !== TICKET_STATUS.CALLED
+              }
             >
               Start Service
             </Button>
@@ -257,7 +270,11 @@ export function Desk() {
                   ticketId: currentTicket?.id || "",
                 })
               }
-              disabled={!currentTicket || completeServiceMutation.isPending}
+              disabled={
+                !currentTicket ||
+                completeServiceMutation.isPending ||
+                currentTicket?.status !== TICKET_STATUS.IN_PROGRESS
+              }
             >
               Complete
             </Button>
