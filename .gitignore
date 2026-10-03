@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 /back-end/data/state.json
+/back-end/data/accounts.json

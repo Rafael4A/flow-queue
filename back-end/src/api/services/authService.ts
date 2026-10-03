@@ -1,21 +1,13 @@
 import jwt from "jsonwebtoken";
-import { USER_ROLE, type AuthPayload } from "shared-code";
+import { type AuthPayload, type UserRole } from "shared-code";
+import _accounts from "../../../data/accounts.json";
 
-const accounts = [
-  { subject: "totem-main", password: "pwd", role: USER_ROLE.TOTEM },
-  {
-    subject: "desk-1",
-    password: "pwd",
-    role: USER_ROLE.DESK,
-    deskId: "Desk 1",
-  },
-  {
-    subject: "desk-2",
-    password: "pwd",
-    role: USER_ROLE.DESK,
-    deskId: "Desk 2",
-  },
-];
+const accounts = _accounts as {
+  subject: string;
+  password: string;
+  role: UserRole;
+  deskId?: string;
+}[];
 
 export function authenticateUser(
   username: string,
@@ -38,5 +30,5 @@ export function authenticateUser(
 
 function generateToken(user: AuthPayload): string {
   // TODO: Use a secure secret key from environment variables
-  return jwt.sign(user, "secret", { expiresIn: "1h" });
+  return jwt.sign(user, process.env.JWT_SECRET!, { expiresIn: "1h" });
 }

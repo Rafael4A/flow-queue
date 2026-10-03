@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import type { UserRole } from "shared-code";
+import type { AuthPayload, UserRole } from "shared-code";
 
 export function verifyJwt(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies?.token;
@@ -12,10 +12,8 @@ export function verifyJwt(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    // TODO: Use a secure secret key from environment variables
-    const decoded = jwt.verify(token, "secret");
-    // TODO: Create a proper type for req with user property - Maybe override with d.ts
-    (req as any).user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as AuthPayload;
+    req.user = decoded;
     next();
   } catch (error) {
     return res.status(403).json({ message: "Invalid or expired token" });
