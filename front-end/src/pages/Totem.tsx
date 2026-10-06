@@ -71,6 +71,7 @@ export function Totem() {
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
         <Card
+          component="button"
           sx={{
             cursor: "pointer",
             border: "2px solid",
@@ -100,6 +101,7 @@ export function Totem() {
         </Card>
 
         <Card
+          component="button"
           sx={{
             cursor: "pointer",
             border: "2px solid",

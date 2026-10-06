@@ -23,11 +23,7 @@ export function useWebsocket() {
     }
   }, [socketRef]);
 
-  const registerEvent = (
-    event: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callback: (...args: any[]) => void,
-  ) => {
+  const registerEvent = (event: string, callback: (...args: any[]) => void) => {
     socketRef.current?.on(event, callback);
   };
 

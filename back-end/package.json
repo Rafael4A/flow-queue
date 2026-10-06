@@ -4,9 +4,9 @@
   "type": "module",
   "main": "./dist/server.mjs",
   "scripts": {
-    "dev": "tsx watch --clear-screen=false src/server.ts",
+    "dev": "tsx watch --clear-screen=false --env-file=../.env src/server.ts",
     "build": "tsdown",
-    "start": "node dist/server.mjs",
+    "start": "node --env-file=../.env dist/server.mjs",
     "test": "vitest run"
   },
   "dependencies": {
@@ -23,8 +23,10 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.13.3",
     "tsdown": "0.22.14",
     "tsx": "^4.23.13",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
   }
 }

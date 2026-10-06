@@ -13,10 +13,10 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "test": "vitest run"
+    "test": "echo \"No tests for shared-code\""
   },
   "devDependencies": {
-    "@types/node": "^22.20.2",
+    "@types/node": "^24.13.3",
     "typescript": "^6.0.3"
   },
   "dependencies": {

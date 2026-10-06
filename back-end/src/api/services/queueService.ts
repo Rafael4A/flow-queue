@@ -13,6 +13,10 @@ import { generateTicketId, timePropSort } from "../../utils";
 
 let state: QueueState = loadState();
 
+export function resetStateForTesting(): void {
+  state = loadState();
+}
+
 export function issueTicket(type: TicketType): Ticket {
   state.sequences[type] += 1;
 

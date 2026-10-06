@@ -29,6 +29,5 @@ export function authenticateUser(
 }
 
 function generateToken(user: AuthPayload): string {
-  // TODO: Use a secure secret key from environment variables
   return jwt.sign(user, process.env.JWT_SECRET!, { expiresIn: "1h" });
 }

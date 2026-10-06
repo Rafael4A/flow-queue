@@ -12,7 +12,8 @@ import { TICKETS_QUERY_KEY } from "../constants";
 import { useWebsocket } from "../hooks";
 import type { APIError } from "../types";
 
-const QueueContext = createContext<{
+//eslint-disable-next-line react-refresh/only-export-components
+export const QueueContext = createContext<{
   clearData: () => void;
   queue?: PublicQueueView;
   isLoading: boolean;

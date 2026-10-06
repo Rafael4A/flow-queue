@@ -51,6 +51,7 @@ export function LogIn() {
             textAlign: "center",
             mb: 1,
           }}
+          data-testid="login-title"
         >
           Sign In
         </Typography>
