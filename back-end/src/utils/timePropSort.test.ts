@@ -14,7 +14,7 @@ function makeTicket(overrides: Partial<Ticket> = {}): Ticket {
 }
 
 describe("timePropSort", () => {
-  it("should sort ascending by createdAt", () => {
+  it("B1.6.1 - should sort ascending by createdAt", () => {
     const D1 = new Date("2026-01-01");
     const D2 = new Date("2026-01-02");
     const D3 = new Date("2026-01-03");
@@ -32,7 +32,7 @@ describe("timePropSort", () => {
     expect(tickets[2]!.id).toBe("T3");
   });
 
-  it("should sort descending by calledAt", () => {
+  it("B1.6.2 - should sort descending by calledAt", () => {
     const D1 = new Date("2026-01-01");
     const D2 = new Date("2026-01-02");
     const D3 = new Date("2026-01-03");
@@ -50,7 +50,7 @@ describe("timePropSort", () => {
     expect(tickets[2]!.id).toBe("T1");
   });
 
-  it("should sort tickets missing time property last for ascending", () => {
+  it("B1.6.3 - should sort tickets missing time property last for ascending", () => {
     const D1 = new Date("2026-01-01");
 
     const tickets = [
@@ -64,7 +64,7 @@ describe("timePropSort", () => {
     expect(tickets[1]!.id).toBe("B");
   });
 
-  it("should sort tickets missing time property first for descending", () => {
+  it("B1.6.4 - should sort tickets missing time property first for descending", () => {
     const D1 = new Date("2026-01-01");
 
     const tickets = [
@@ -78,7 +78,7 @@ describe("timePropSort", () => {
     expect(tickets[1]!.id).toBe("A");
   });
 
-  it("should return 0 when both tickets missing time property", () => {
+  it("B1.6.5 - should return 0 when both tickets missing time property", () => {
     const sortFn = timePropSort("createdAt", true);
     const a = makeTicket({ id: "A", createdAt: undefined as unknown as Date });
     const b = makeTicket({ id: "B", createdAt: undefined as unknown as Date });

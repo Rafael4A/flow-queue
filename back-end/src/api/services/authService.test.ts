@@ -13,7 +13,7 @@ vi.mock("../../../data/accounts.json", () => ({
 }));
 
 describe("authService", () => {
-  it("3.1.1 - Valid Login - TOTEM Role", () => {
+  it("B2.1.1 - Valid Login - TOTEM Role", () => {
     const result = authenticateUser("totem-main", "pwd");
 
     expect(result.token).toBeDefined();
@@ -27,7 +27,7 @@ describe("authService", () => {
     expect(decoded.role).toBe("TOTEM");
   });
 
-  it("3.1.2 - Valid Login - DESK Role with deskId", () => {
+  it("B2.1.2 - Valid Login - DESK Role with deskId", () => {
     const result = authenticateUser("desk-1", "pwd");
 
     expect(result.user.sub).toBe("desk-1");
@@ -35,19 +35,19 @@ describe("authService", () => {
     expect(result.user.deskId).toBe("Desk 1");
   });
 
-  it("3.1.3 - Invalid Username", () => {
+  it("B2.1.3 - Invalid Username", () => {
     expect(() => authenticateUser("nonexistent", "pwd")).toThrow(
       "Invalid username or password",
     );
   });
 
-  it("3.1.4 - Invalid Password", () => {
+  it("B2.1.4 - Invalid Password", () => {
     expect(() => authenticateUser("desk-1", "wrong-password")).toThrow(
       "Invalid username or password",
     );
   });
 
-  it("3.1.5 - JWT Token Expiration", () => {
+  it("B2.1.5 - JWT Token Expiration", () => {
     const result = authenticateUser("desk-1", "pwd");
     const decoded = jwt.verify(result.token, JWT_SECRET) as { exp: number };
 

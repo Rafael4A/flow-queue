@@ -39,8 +39,8 @@ beforeEach(() => {
   resetStateForTesting();
 });
 
-describe("queueService - Priority Scheduling", () => {
-  it("2.1.1 - Starvation-Free 2:1 Ratio - Basic Interleaving", () => {
+describe("queueService - B1.1 Priority Scheduling", () => {
+  it("B1.1.1 - Starvation-Free 2:1 Ratio - Basic Interleaving", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     issueTicket(TICKET_TYPE.PRIORITY);
     issueTicket(TICKET_TYPE.PRIORITY);
@@ -73,7 +73,7 @@ describe("queueService - Priority Scheduling", () => {
     expect(t6!.status).toBe("CALLED");
   });
 
-  it("2.1.2 - 2:1 Ratio with Mixed Arrival Order", () => {
+  it("B1.1.2 - 2:1 Ratio with Mixed Arrival Order", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     issueTicket(TICKET_TYPE.CONVENTIONAL);
     issueTicket(TICKET_TYPE.PRIORITY);
@@ -96,7 +96,7 @@ describe("queueService - Priority Scheduling", () => {
     expect(t5!.id).toBe("CON-002");
   });
 
-  it("2.1.3 - Priority Queue Only (No Conventional Tickets)", () => {
+  it("B1.1.3 - Priority Queue Only (No Conventional Tickets)", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     issueTicket(TICKET_TYPE.PRIORITY);
     issueTicket(TICKET_TYPE.PRIORITY);
@@ -111,7 +111,7 @@ describe("queueService - Priority Scheduling", () => {
     expect(t3!.id).toBe("PRI-003");
   });
 
-  it("2.1.4 - Conventional Queue Only (No Priority Tickets)", () => {
+  it("B1.1.4 - Conventional Queue Only (No Priority Tickets)", () => {
     issueTicket(TICKET_TYPE.CONVENTIONAL);
     issueTicket(TICKET_TYPE.CONVENTIONAL);
     issueTicket(TICKET_TYPE.CONVENTIONAL);
@@ -126,12 +126,12 @@ describe("queueService - Priority Scheduling", () => {
     expect(t3!.id).toBe("CON-003");
   });
 
-  it("2.1.5 - Empty Queue", () => {
+  it("B1.1.5 - Empty Queue", () => {
     const result = callNext("Desk 1");
     expect(result).toBeUndefined();
   });
 
-  it("2.1.6 - Desk Already Has a Ticket", () => {
+  it("B1.1.6 - Desk Already Has a Ticket", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
 
     callNext("Desk 1");
@@ -139,7 +139,7 @@ describe("queueService - Priority Scheduling", () => {
     expect(() => callNext("Desk 1")).toThrow(/already has a ticket/);
   });
 
-  it("2.1.7 - Desk Calling for Different Desk (Cross-Desk Safety)", () => {
+  it("B1.1.7 - Desk Calling for Different Desk (Cross-Desk Safety)", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     issueTicket(TICKET_TYPE.CONVENTIONAL);
 
@@ -152,7 +152,7 @@ describe("queueService - Priority Scheduling", () => {
     expect(t2!.id).toBe("CON-001");
   });
 
-  it("2.1.8 - Priority Counter Persistence Across callNext Calls", () => {
+  it("B1.1.8 - Priority Counter Persistence Across callNext Calls", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     issueTicket(TICKET_TYPE.CONVENTIONAL);
     issueTicket(TICKET_TYPE.PRIORITY);
@@ -184,7 +184,7 @@ describe("queueService - Priority Scheduling", () => {
     expect(storageMock.state.priorityCounter).toBe(2);
   });
 
-  it("2.1.9 - Ticket Issuance Sequence Numbers", () => {
+  it("B1.1.9 - Ticket Issuance Sequence Numbers", () => {
     const t1 = issueTicket(TICKET_TYPE.CONVENTIONAL);
     expect(t1.id).toBe("CON-001");
 
@@ -204,7 +204,7 @@ describe("queueService - Priority Scheduling", () => {
     expect(t6.id).toBe("CON-004");
   });
 
-  it("2.1.10 - Ticket Issuance Creates Correct Ticket Object", () => {
+  it("B1.1.10 - Ticket Issuance Creates Correct Ticket Object", () => {
     const pTicket = issueTicket(TICKET_TYPE.PRIORITY);
 
     expect(pTicket.id).toMatch(/^PRI-\d{3,}$/);
@@ -224,8 +224,8 @@ describe("queueService - Priority Scheduling", () => {
   });
 });
 
-describe("queueService - Ticket Lifecycle", () => {
-  it("2.2.1 - Full Lifecycle ISSUED -> CALLED -> IN_PROGRESS -> COMPLETED", () => {
+describe("queueService - B1.2 Ticket Lifecycle", () => {
+  it("B1.2.1 - Full Lifecycle ISSUED -> CALLED -> IN_PROGRESS -> COMPLETED", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
 
     const called = callNext("Desk 1");
@@ -240,7 +240,7 @@ describe("queueService - Ticket Lifecycle", () => {
     expect(completed.completedAt).toBeInstanceOf(Date);
   });
 
-  it("2.2.2 - Invalid Transition COMPLETED Directly from ISSUED", () => {
+  it("B1.2.2 - Invalid Transition COMPLETED Directly from ISSUED", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
 
     expect(() => completeService(ticket.id, "Desk 1")).toThrow(
@@ -248,7 +248,7 @@ describe("queueService - Ticket Lifecycle", () => {
     );
   });
 
-  it("2.2.3 - Invalid Transition START from ISSUED (bypass CALLED)", () => {
+  it("B1.2.3 - Invalid Transition START from ISSUED (bypass CALLED)", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
 
     expect(() => startService(ticket.id, "Desk 1")).toThrow(
@@ -256,7 +256,7 @@ describe("queueService - Ticket Lifecycle", () => {
     );
   });
 
-  it("2.2.4 - Invalid Transition COMPLETE from CALLED", () => {
+  it("B1.2.4 - Invalid Transition COMPLETE from CALLED", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
 
@@ -266,7 +266,7 @@ describe("queueService - Ticket Lifecycle", () => {
     );
   });
 
-  it("2.2.5 - Invalid Transition START from IN_PROGRESS", () => {
+  it("B1.2.5 - Invalid Transition START from IN_PROGRESS", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
     startService(ticket.id, "Desk 1");
@@ -276,7 +276,7 @@ describe("queueService - Ticket Lifecycle", () => {
     );
   });
 
-  it("2.2.6 - Absent -> Requeue -> Back to ISSUED", () => {
+  it("B1.2.6 - Absent -> Requeue -> Back to ISSUED", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
 
@@ -294,7 +294,7 @@ describe("queueService - Ticket Lifecycle", () => {
     expect(called!.id).toBe(ticket.id);
   });
 
-  it("2.2.7 - Absent Ticket Cannot Be Started or Completed", () => {
+  it("B1.2.7 - Absent Ticket Cannot Be Started or Completed", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
     markAbsent(ticket.id, "Desk 1");
@@ -308,12 +308,12 @@ describe("queueService - Ticket Lifecycle", () => {
     );
   });
 
-  it("2.2.8 - Requeue from Wrong Status (not ABSENT)", () => {
+  it("B1.2.8 - Requeue from Wrong Status (not ABSENT)", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
     expect(() => requeueTicket(ticket.id)).toThrow(/is not in an absent state/);
   });
 
-  it("2.2.9 - Ticket Not Found - All Functions", () => {
+  it("B1.2.9 - Ticket Not Found - All Functions", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
 
     const nonExistentId = "nonexistent";
@@ -324,7 +324,7 @@ describe("queueService - Ticket Lifecycle", () => {
     expect(() => completeService(nonExistentId, "Desk 1")).toThrow(/not found/);
   });
 
-  it("2.2.10 - Wrong Desk Assignment - repeatCall", () => {
+  it("B1.2.10 - Wrong Desk Assignment - repeatCall", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
 
@@ -334,7 +334,7 @@ describe("queueService - Ticket Lifecycle", () => {
     );
   });
 
-  it("2.2.11 - Wrong Desk Assignment - markAbsent", () => {
+  it("B1.2.11 - Wrong Desk Assignment - markAbsent", () => {
     issueTicket(TICKET_TYPE.CONVENTIONAL);
     callNext("Desk 1");
 
@@ -344,7 +344,7 @@ describe("queueService - Ticket Lifecycle", () => {
     );
   });
 
-  it("2.2.12 - Wrong Desk Assignment - startService", () => {
+  it("B1.2.12 - Wrong Desk Assignment - startService", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
 
@@ -354,7 +354,7 @@ describe("queueService - Ticket Lifecycle", () => {
     );
   });
 
-  it("2.2.13 - Wrong Desk Assignment - completeService", () => {
+  it("B1.2.13 - Wrong Desk Assignment - completeService", () => {
     const ticket = issueTicket(TICKET_TYPE.CONVENTIONAL);
     callNext("Desk 1");
     startService(ticket.id, "Desk 1");
@@ -365,8 +365,8 @@ describe("queueService - Ticket Lifecycle", () => {
   });
 });
 
-describe("queueService - Repeat Call", () => {
-  it("2.3.1 - Repeat Call Increments callCount", () => {
+describe("queueService - B1.3 Repeat Call", () => {
+  it("B1.3.1 - Repeat Call Increments callCount", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
 
@@ -376,7 +376,7 @@ describe("queueService - Repeat Call", () => {
     expect(t1.calledAt).toBeInstanceOf(Date);
   });
 
-  it("2.3.2 - Repeat Call Reaches MAX_CALL_ATTEMPTS (3)", () => {
+  it("B1.3.2 - Repeat Call Reaches MAX_CALL_ATTEMPTS (3)", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
 
@@ -389,14 +389,14 @@ describe("queueService - Repeat Call", () => {
     );
   });
 
-  it("2.3.3 - Repeat Call on Non-CALLED Ticket", () => {
+  it("B1.3.3 - Repeat Call on Non-CALLED Ticket", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
     expect(() => repeatCall(ticket.id, "Desk 1")).toThrow(
       /is not assigned to desk/,
     );
   });
 
-  it("2.3.4 - Repeat Call on IN_PROGRESS Ticket", () => {
+  it("B1.3.4 - Repeat Call on IN_PROGRESS Ticket", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
     startService(ticket.id, "Desk 1");
@@ -407,8 +407,8 @@ describe("queueService - Repeat Call", () => {
   });
 });
 
-describe("queueService - Public Queue View", () => {
-  it("2.4.1 - getPublicState - Empty Queue", () => {
+describe("queueService - B1.4 Public Queue View", () => {
+  it("B1.4.1 - getPublicState - Empty Queue", () => {
     const state = getPublicState();
     expect(state.currentTicket).toBeUndefined();
     expect(state.recentCalls).toEqual([]);
@@ -416,7 +416,7 @@ describe("queueService - Public Queue View", () => {
     expect(state.waitingTickets?.PRIORITY).toBe(0);
   });
 
-  it("2.4.2 - getPublicState - Current Ticket Displayed", () => {
+  it("B1.4.2 - getPublicState - Current Ticket Displayed", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
 
@@ -425,7 +425,7 @@ describe("queueService - Public Queue View", () => {
     expect(state.currentTicket!.status).toBe("CALLED");
   });
 
-  it("2.4.3 - getPublicState - Recent Calls with Current Ticket (reaches max)", () => {
+  it("B1.4.3 - getPublicState - Recent Calls with Current Ticket (reaches max)", () => {
     for (let i = 0; i < 7; i++) {
       issueTicket(TICKET_TYPE.PRIORITY);
       callNext(`Desk ${i + 1}`);
@@ -435,7 +435,7 @@ describe("queueService - Public Queue View", () => {
     expect(state.recentCalls).toHaveLength(5);
   });
 
-  it("2.4.4 - getPublicState - Recent Calls without pending tickets", () => {
+  it("B1.4.4 - getPublicState - Recent Calls without pending tickets", () => {
     for (let i = 0; i < 5; i++) {
       const ticket = issueTicket(TICKET_TYPE.PRIORITY);
       callNext("Desk 1");
@@ -448,7 +448,7 @@ describe("queueService - Public Queue View", () => {
     expect(state.recentCalls).toHaveLength(0);
   });
 
-  it("2.4.5 - getPublicState - Waiting Tickets Count", () => {
+  it("B1.4.5 - getPublicState - Waiting Tickets Count", () => {
     for (let i = 0; i < 3; i++) {
       issueTicket(TICKET_TYPE.CONVENTIONAL);
     }
@@ -461,7 +461,7 @@ describe("queueService - Public Queue View", () => {
     expect(state.waitingTickets?.PRIORITY).toBe(2);
   });
 
-  it("2.4.6 - getPublicState - ABSENT Ticket Not Shown as Current", () => {
+  it("B1.4.6 - getPublicState - ABSENT Ticket Not Shown as Current", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
     callNext("Desk 1");
     markAbsent(ticket.id, "Desk 1");
@@ -473,7 +473,7 @@ describe("queueService - Public Queue View", () => {
     );
   });
 
-  it("2.4.7 - getPublicState - Recent Calls Sorted by calledAt Descending", () => {
+  it("B1.4.7 - getPublicState - Recent Calls Sorted by calledAt Descending", () => {
     for (let i = 0; i < 3; i++) {
       issueTicket(TICKET_TYPE.PRIORITY);
       callNext(`Desk ${i + 1}`);
@@ -487,7 +487,7 @@ describe("queueService - Public Queue View", () => {
     expect(a.calledAt!.getTime()).toBeGreaterThanOrEqual(b.calledAt!.getTime());
   });
 
-  it("2.4.8 - getPublicState - Only CALLED and ABSENT in Recent Calls", () => {
+  it("B1.4.8 - getPublicState - Only CALLED and ABSENT in Recent Calls", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
     const t1 = callNext("Desk 1");
     markAbsent(t1!.id, "Desk 1");

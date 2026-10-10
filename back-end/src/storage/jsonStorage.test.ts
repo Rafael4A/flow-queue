@@ -46,7 +46,7 @@ describe("jsonStorage", () => {
     }
   });
 
-  it("should save and load state with round trip", () => {
+  it("B1.7.1 - should save and load state with round trip", () => {
     const state = createTempState();
     saveState(state);
 
@@ -65,7 +65,7 @@ describe("jsonStorage", () => {
     expect(loaded.tickets[1]!.createdAt).toBeInstanceOf(Date);
   });
 
-  it("should return default state when file does not exist", () => {
+  it("B1.7.2 - should return default state when file does not exist", () => {
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
     const loaded = loadState();
@@ -76,7 +76,7 @@ describe("jsonStorage", () => {
     expect(loaded.tickets).toEqual([]);
   });
 
-  it("should rename temp file after save (atomic write)", () => {
+  it("B1.7.3 - should rename temp file after save (atomic write)", () => {
     const state = createTempState();
     const tempPath = path.join(__dirname, "../../data/state.temp.json");
     saveState(state);
@@ -85,7 +85,7 @@ describe("jsonStorage", () => {
     expect(fs.existsSync(tempPath)).toBe(false);
   });
 
-  it("should parse ISO dates with various formats", () => {
+  it("B1.7.4 - should parse ISO dates with various formats", () => {
     const dir = path.join(__dirname, "../../data");
     const statePath = path.join(dir, "state.json");
 

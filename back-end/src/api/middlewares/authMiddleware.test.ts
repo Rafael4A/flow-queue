@@ -30,7 +30,7 @@ describe("authMiddleware", () => {
   });
 
   describe("verifyJwt", () => {
-    it("3.3.1 - No Token", () => {
+    it("B2.2.1 - No Token", () => {
       const req = createMockReq();
       const res = createMockRes();
 
@@ -42,7 +42,7 @@ describe("authMiddleware", () => {
       });
     });
 
-    it("3.3.2 - Invalid Token", () => {
+    it("B2.2.2 - Invalid Token", () => {
       const req = createMockReq({ cookies: { token: "invalid-token" } });
       const res = createMockRes();
 
@@ -54,7 +54,7 @@ describe("authMiddleware", () => {
       });
     });
 
-    it("3.3.3 - Valid Token Attaches User", () => {
+    it("B2.2.3 - Valid Token Attaches User", () => {
       const token = jwt.sign(
         { sub: "desk-1", role: "DESK", deskId: "Desk 1" },
         JWT_SECRET,
@@ -75,7 +75,7 @@ describe("authMiddleware", () => {
   });
 
   describe("requireRole", () => {
-    it("3.3.4 - Allowed Role", () => {
+    it("B2.2.4 - Allowed Role", () => {
       const req = createMockReq({
         user: { sub: "desk-1", role: "DESK" },
       });
@@ -89,7 +89,7 @@ describe("authMiddleware", () => {
       expect(res.status).not.toHaveBeenCalled();
     });
 
-    it("3.3.5 - Forbidden Role", () => {
+    it("B2.2.5 - Forbidden Role", () => {
       const req = createMockReq({
         user: { sub: "totem-main", role: "TOTEM" },
       });
@@ -102,7 +102,7 @@ describe("authMiddleware", () => {
       expect(res.json).toHaveBeenCalledWith({ message: "Forbidden" });
     });
 
-    it("3.3.6 - No User Attached", () => {
+    it("B2.2.6 - No User Attached", () => {
       const req = createMockReq({ user: undefined });
       const res = createMockRes();
 

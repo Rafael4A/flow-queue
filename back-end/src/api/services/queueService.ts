@@ -209,7 +209,7 @@ export function getPublicState(): PublicQueueView {
   const statusesToFilter: TicketStatus[] = [
     TICKET_STATUS.CALLED,
     TICKET_STATUS.ABSENT,
-  ]; //TODO CHECK IF THESE ARE THE CORRECT STATUSES -> CONSIDER THE FILTER BY CALLED AT
+  ];
 
   const filteredTickets = state.tickets
     .filter((t) => statusesToFilter.includes(t.status) && !!t.calledAt)
