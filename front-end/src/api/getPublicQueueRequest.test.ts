@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getPublicQueueRequest } from "./getPublicQueueRequest";
 
 describe("getPublicQueueRequest", () => {
-  it("4.7.6 - Success", async () => {
+  it("F1.6.6 - Success", async () => {
     const mockQueue = {
       currentTicket: undefined,
       recentCalls: [],

@@ -32,7 +32,7 @@ function renderWithProviders(ui: React.ReactElement) {
 }
 
 describe("Display", () => {
-  it("4.4.1 - No Current Ticket", async () => {
+  it("F1.3.1 - No Current Ticket", async () => {
     renderWithProviders(<Display />);
 
     await screen.findByText("Currently Serving");
@@ -40,7 +40,7 @@ describe("Display", () => {
     expect(screen.getByText("Currently Serving")).toBeInTheDocument();
   });
 
-  it("4.4.5 - Waiting Counts", async () => {
+  it("F1.3.5 - Waiting Counts", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -59,7 +59,7 @@ describe("Display", () => {
     expect(screen.getByText("Waiting - Priority")).toBeInTheDocument();
   });
 
-  it("4.4.7 - No Recent Calls When Empty", async () => {
+  it("F1.3.7 - No Recent Calls When Empty", async () => {
     renderWithProviders(<Display />);
 
     await screen.findByText("No recent calls");
@@ -67,7 +67,7 @@ describe("Display", () => {
     expect(screen.getByText("No recent calls")).toBeInTheDocument();
   });
 
-  it("4.4.9 - Loading State", () => {
+  it("F1.3.9 - Loading State", () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>

@@ -55,7 +55,7 @@ function renderWithProviders(
 }
 
 describe("Desk", () => {
-  it("4.3.1 - Desk Renders with No Current Ticket", async () => {
+  it("F1.2.1 - Desk Renders with No Current Ticket", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(null),
@@ -66,7 +66,7 @@ describe("Desk", () => {
     expect(screen.getByText("Staff Desk")).toBeInTheDocument();
   });
 
-  it("4.3.17 - Redirects When Not Authenticated", () => {
+  it("F1.2.17 - Redirects When Not Authenticated", () => {
     renderWithProviders(<Desk />, {} as AuthPayload);
     expect(mockNavigate).toHaveBeenCalledWith("/login");
   });

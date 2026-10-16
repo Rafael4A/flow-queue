@@ -27,7 +27,7 @@ function renderWithProviders(ui: React.ReactElement) {
 }
 
 describe("LogIn", () => {
-  it("4.5.1 - Login Form Renders", () => {
+  it("F1.4.1 - Login Form Renders", () => {
     renderWithProviders(<LogIn />);
 
     expect(screen.getByTestId("login-title")).toBeInTheDocument();
@@ -35,13 +35,13 @@ describe("LogIn", () => {
     expect(screen.getByLabelText("Password *")).toBeInTheDocument();
   });
 
-  it("4.5.4 - Button Disabled When Fields Empty", () => {
+  it("F1.4.4 - Button Disabled When Fields Empty", () => {
     renderWithProviders(<LogIn />);
     const button = screen.getByRole("button", { name: /sign in/i });
     expect(button).toBeDisabled();
   });
 
-  it("4.5.5 - Button Shows Loading State", () => {
+  it("F1.4.5 - Button Shows Loading State", () => {
     renderWithProviders(<LogIn />);
 
     globalThis.fetch = vi.fn().mockResolvedValue({

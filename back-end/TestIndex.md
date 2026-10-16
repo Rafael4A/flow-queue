@@ -407,15 +407,15 @@ All back-end tests use `vitest` with `node` environment. Tests live alongside so
 
 ---
 
-## B3. Test Execution
+## Test Execution
 
-### B3.1. Run Tests
+### Run Tests
 
 ```bash
 npm run back test
 ```
 
-### B3.2. Run Specific Test File
+### Run Specific Test File
 
 ```bash
 npm run back test -- src/api/services/queueService.test.ts

@@ -3,7 +3,7 @@ import { TEST_DEFAULT_DATE_STRING } from "../testSetup";
 import { getDeskTicketRequest } from "./getDeskTicketRequest";
 
 describe("getDeskTicketRequest", () => {
-  it("4.7.7 - Success", async () => {
+  it("F1.6.7 - Success", async () => {
     const mockTicket = {
       id: "PRI-001",
       type: "PRIORITY",
@@ -16,7 +16,7 @@ describe("getDeskTicketRequest", () => {
     expect(result).toEqual(mockTicket);
   });
 
-  it("4.7.8 - No Ticket", async () => {
+  it("F1.6.8 - No Ticket", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(null),

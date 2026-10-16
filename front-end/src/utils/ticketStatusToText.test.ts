@@ -3,7 +3,7 @@ import { ticketStatusToText } from "./ticketStatusToText";
 import { TICKET_STATUS } from "shared-code";
 
 describe("ticketStatusToText", () => {
-  it("4.6.1 - All Status Mappings", () => {
+  it("F1.5.1 - All Status Mappings", () => {
     expect(ticketStatusToText(TICKET_STATUS.ISSUED)).toBe("Issued");
     expect(ticketStatusToText(TICKET_STATUS.CALLED)).toBe("Called");
     expect(ticketStatusToText(TICKET_STATUS.IN_PROGRESS)).toBe("In Progress");
@@ -11,7 +11,7 @@ describe("ticketStatusToText", () => {
     expect(ticketStatusToText(TICKET_STATUS.ABSENT)).toBe("Absent");
   });
 
-  it("4.6.2 - Unknown Status Falls Through", () => {
+  it("F1.5.2 - Unknown Status Falls Through", () => {
     expect(ticketStatusToText("UNKNOWN" as any)).toBe("UNKNOWN");
   });
 });

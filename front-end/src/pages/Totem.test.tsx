@@ -69,13 +69,13 @@ function renderWithProviders(
 }
 
 describe("Totem", () => {
-  it("4.2.1 - Totem Renders Ticket Options", () => {
+  it("F1.1.1 - Totem Renders Ticket Options", () => {
     renderWithProviders(<Totem />);
     expect(screen.getByText("Standard Ticket")).toBeInTheDocument();
     expect(screen.getByText("Priority Ticket")).toBeInTheDocument();
   });
 
-  it("4.2.2 - Totem Redirects When Not Authenticated", () => {
+  it("F1.1.2 - Totem Redirects When Not Authenticated", () => {
     renderWithProviders(<Totem />, {
       sub: "desk-1",
       role: "DESK",
@@ -84,7 +84,7 @@ describe("Totem", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/login");
   });
 
-  it("4.2.5 - Totem - Shows Waiting Counts", () => {
+  it("F1.1.5 - Totem - Shows Waiting Counts", () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -103,7 +103,7 @@ describe("Totem", () => {
     });
   });
 
-  it("4.2.6 - Totem - Queue Summary Chips", () => {
+  it("F1.1.6 - Totem - Queue Summary Chips", () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -122,7 +122,7 @@ describe("Totem", () => {
     });
   });
 
-  it("4.2.7 - Card Disabled During Mutation", async () => {
+  it("F1.1.7 - Card Disabled During Mutation", async () => {
     mockIssueTicket.mockReturnValue({
       promise: {
         then: vi.fn(),

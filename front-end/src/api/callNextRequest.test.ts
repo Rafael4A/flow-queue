@@ -4,7 +4,7 @@ import type { APIError } from "../types";
 import { callNextRequest } from "./callNextRequest";
 
 describe("callNextRequest", () => {
-  it("4.7.3 - Success", async () => {
+  it("F1.6.3 - Success", async () => {
     const mockTicket = {
       id: "PRI-001",
       type: "PRIORITY" as const,
@@ -17,7 +17,7 @@ describe("callNextRequest", () => {
     expect(result).toEqual(mockTicket);
   });
 
-  it("4.7.4 - No Tickets Waiting", async () => {
+  it("F1.6.4 - No Tickets Waiting", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ message: "No tickets waiting" }),
@@ -27,7 +27,7 @@ describe("callNextRequest", () => {
     expect(result).toEqual({ message: "No tickets waiting" });
   });
 
-  it("4.7.5 - 400 Error (Desk Has Ticket)", async () => {
+  it("F1.6.5 - 400 Error (Desk Has Ticket)", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 400,

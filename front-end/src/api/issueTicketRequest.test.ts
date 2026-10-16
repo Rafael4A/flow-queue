@@ -4,7 +4,7 @@ import type { APIError } from "../types";
 import { issueTicketRequest } from "./issueTicketRequest";
 
 describe("issueTicketRequest", () => {
-  it("4.7.1 - Success", async () => {
+  it("F1.6.1 - Success", async () => {
     const mockTicket = {
       id: "PRI-001",
       type: "PRIORITY" as const,
@@ -26,7 +26,7 @@ describe("issueTicketRequest", () => {
     });
   });
 
-  it("4.7.2 - 400 Error", async () => {
+  it("F1.6.2 - 400 Error", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 400,
