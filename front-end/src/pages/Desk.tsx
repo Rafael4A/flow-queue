@@ -23,8 +23,7 @@ import {
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate } from "react-router";
-import { TICKET_STATUS, USER_ROLE } from "shared-code";
+import { TICKET_STATUS } from "shared-code";
 import {
   callNextRequest,
   completeServiceRequest,
@@ -34,18 +33,11 @@ import {
   requeueRequest,
   startServiceRequest,
 } from "../api";
-import { useAuthContext, useQueueContext } from "../contexts";
+import { useQueueContext } from "../contexts";
 import { useSnackAlert } from "../contexts/useSnackAlert";
 import { ticketStatusToText } from "../utils";
 
 export function Desk() {
-  const { auth } = useAuthContext();
-  const navigate = useNavigate();
-
-  if (auth?.role !== USER_ROLE.DESK) {
-    navigate("/login");
-  }
-
   const { openAlert } = useSnackAlert();
 
   const { queue, isLoading } = useQueueContext();

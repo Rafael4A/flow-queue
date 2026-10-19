@@ -9,20 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
-import { TICKET_TYPE, USER_ROLE } from "shared-code";
+import { TICKET_TYPE } from "shared-code";
 import { issueTicketRequest } from "../api";
-import { useAuthContext, useQueueContext } from "../contexts";
+import { useQueueContext } from "../contexts";
 import { useSnackAlert } from "../contexts/useSnackAlert";
 
 export function Totem() {
-  const navigate = useNavigate();
-  const { auth } = useAuthContext();
   const { openAlert } = useSnackAlert();
-
-  if (auth?.role !== USER_ROLE.TOTEM) {
-    navigate("/login");
-  }
 
   const issueTicketMutation = useMutation({
     mutationFn: issueTicketRequest,

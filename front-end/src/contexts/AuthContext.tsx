@@ -1,9 +1,15 @@
 import { jwtDecode } from "jwt-decode";
-import { createContext, useContext, type PropsWithChildren } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  type PropsWithChildren,
+} from "react";
 import type { AuthPayload } from "shared-code";
 
 type AuthContextType = {
   auth?: AuthPayload;
+  refreshAuth: () => void;
 };
 
 //eslint-disable-next-line react-refresh/only-export-components
@@ -25,9 +31,18 @@ function getCookie(name: string) {
 }
 
 export function AuthProvider({ children }: Readonly<PropsWithChildren>) {
-  const token = getCookie("token");
+  const getAuthFromCookie = () => {
+    const token = getCookie("token");
+    return token ? jwtDecode<AuthPayload>(token) : undefined;
+  };
 
-  const auth = token ? jwtDecode<AuthPayload>(token) : undefined;
+  const [auth, setAuth] = useState<AuthPayload | undefined>(
+    getAuthFromCookie(),
+  );
 
-  return <AuthContext value={{ auth }}>{children}</AuthContext>;
+  const refreshAuth = () => {
+    setAuth(getAuthFromCookie());
+  };
+
+  return <AuthContext value={{ auth, refreshAuth }}>{children}</AuthContext>;
 }

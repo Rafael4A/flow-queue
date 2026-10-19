@@ -12,13 +12,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { USER_ROLE } from "shared-code";
 import { logInRequest } from "../api";
+import { useAuthContext } from "../contexts";
 
 export function LogIn() {
   const navigate = useNavigate();
+  const { refreshAuth } = useAuthContext();
 
   const logInMutation = useMutation({
     mutationFn: logInRequest,
     onSuccess: (data) => {
+      refreshAuth();
       if (data.role === USER_ROLE.DESK) {
         navigate("/desk");
       } else if (data.role === USER_ROLE.TOTEM) {

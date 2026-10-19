@@ -40,13 +40,11 @@ export function QueueProvider({ children }: Readonly<PropsWithChildren>) {
   const queue = useQuery({
     queryKey: [TICKETS_QUERY_KEY],
     queryFn: () => getPublicQueueRequest(),
-    enabled: true, // TODO: Probably remove this, check how this will work with auth
     retryDelay: 0,
   });
 
   const clearData = () => {
     queryClient.removeQueries({ queryKey: [TICKETS_QUERY_KEY], exact: true });
-    // TODO: ? Create sign out function that clears session storage and redirects to home page
 
     disconnectSocket();
   };
