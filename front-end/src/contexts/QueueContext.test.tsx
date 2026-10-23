@@ -1,9 +1,17 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { QueueProvider, useQueueContext } from "./QueueContext";
 import { SocketProvider } from "./SocketContext";
+
+vi.mock("../hooks/useWebsocket", () => ({
+  useWebsocket: () => ({
+    connectSocket: vi.fn(),
+    disconnectSocket: vi.fn(),
+    registerEvent: vi.fn(),
+  }),
+}));
 
 function TestComponent() {
   const { queue, isLoading } = useQueueContext();
@@ -34,16 +42,23 @@ function renderWithProviders(ui: React.ReactElement) {
 }
 
 describe("QueueContext", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("F1.7.4 - Provides Queue Data", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          currentTicket: undefined,
-          recentCalls: [],
-          waitingTickets: { CONVENTIONAL: 0, PRIORITY: 0 },
-        }),
-    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            currentTicket: undefined,
+            recentCalls: [],
+            waitingTickets: { CONVENTIONAL: 0, PRIORITY: 0 },
+          }),
+      }),
+    );
 
     renderWithProviders(<TestComponent />);
 

@@ -50,27 +50,27 @@ describe("queueService - B1.1 Priority Scheduling", () => {
 
     const t1 = callNext("Desk 1");
     expect(t1!.id).toBe("PRI-001");
-    expect(t1!.status).toBe("CALLED");
+    expect(t1!.status).toBe(TICKET_STATUS.CALLED);
 
     const t2 = callNext("Desk 2");
     expect(t2!.id).toBe("PRI-002");
-    expect(t2!.status).toBe("CALLED");
+    expect(t2!.status).toBe(TICKET_STATUS.CALLED);
 
     const t3 = callNext("Desk 3");
     expect(t3!.id).toBe("CON-001");
-    expect(t3!.status).toBe("CALLED");
+    expect(t3!.status).toBe(TICKET_STATUS.CALLED);
 
     const t4 = callNext("Desk 4");
     expect(t4!.id).toBe("PRI-003");
-    expect(t4!.status).toBe("CALLED");
+    expect(t4!.status).toBe(TICKET_STATUS.CALLED);
 
     const t5 = callNext("Desk 5");
     expect(t5!.id).toBe("PRI-004");
-    expect(t5!.status).toBe("CALLED");
+    expect(t5!.status).toBe(TICKET_STATUS.CALLED);
 
     const t6 = callNext("Desk 6");
     expect(t6!.id).toBe("CON-002");
-    expect(t6!.status).toBe("CALLED");
+    expect(t6!.status).toBe(TICKET_STATUS.CALLED);
   });
 
   it("B1.1.2 - 2:1 Ratio with Mixed Arrival Order", () => {
@@ -208,16 +208,16 @@ describe("queueService - B1.1 Priority Scheduling", () => {
     const pTicket = issueTicket(TICKET_TYPE.PRIORITY);
 
     expect(pTicket.id).toMatch(/^PRI-\d{3,}$/);
-    expect(pTicket.type).toBe("PRIORITY");
-    expect(pTicket.status).toBe("ISSUED");
+    expect(pTicket.type).toBe(TICKET_TYPE.PRIORITY);
+    expect(pTicket.status).toBe(TICKET_STATUS.ISSUED);
     expect(pTicket.callCount).toBe(0);
     expect(pTicket.createdAt).toBeInstanceOf(Date);
     expect(pTicket.deskId).toBeUndefined();
 
     const cTicket = issueTicket(TICKET_TYPE.CONVENTIONAL);
     expect(cTicket.id).toMatch(/^CON-\d{3,}$/);
-    expect(cTicket.type).toBe("CONVENTIONAL");
-    expect(cTicket.status).toBe("ISSUED");
+    expect(cTicket.type).toBe(TICKET_TYPE.CONVENTIONAL);
+    expect(cTicket.status).toBe(TICKET_STATUS.ISSUED);
     expect(cTicket.callCount).toBe(0);
     expect(cTicket.createdAt).toBeInstanceOf(Date);
     expect(cTicket.deskId).toBeUndefined();
@@ -229,14 +229,14 @@ describe("queueService - B1.2 Ticket Lifecycle", () => {
     const ticket = issueTicket(TICKET_TYPE.PRIORITY);
 
     const called = callNext("Desk 1");
-    expect(called!.status).toBe("CALLED");
+    expect(called!.status).toBe(TICKET_STATUS.CALLED);
 
     const started = startService(ticket.id, "Desk 1");
-    expect(started.status).toBe("IN_PROGRESS");
+    expect(started.status).toBe(TICKET_STATUS.IN_PROGRESS);
     expect(started.startedAt).toBeInstanceOf(Date);
 
     const completed = completeService(ticket.id, "Desk 1");
-    expect(completed.status).toBe("COMPLETED");
+    expect(completed.status).toBe(TICKET_STATUS.COMPLETED);
     expect(completed.completedAt).toBeInstanceOf(Date);
   });
 
@@ -281,10 +281,10 @@ describe("queueService - B1.2 Ticket Lifecycle", () => {
     callNext("Desk 1");
 
     const absent = markAbsent(ticket.id, "Desk 1");
-    expect(absent.status).toBe("ABSENT");
+    expect(absent.status).toBe(TICKET_STATUS.ABSENT);
 
     const requeued = requeueTicket(ticket.id);
-    expect(requeued.status).toBe("ISSUED");
+    expect(requeued.status).toBe(TICKET_STATUS.ISSUED);
     expect(requeued.deskId).toBeUndefined();
     expect(requeued.calledAt).toBeUndefined();
     expect(requeued.callCount).toBe(0);
@@ -422,7 +422,7 @@ describe("queueService - B1.4 Public Queue View", () => {
 
     const state = getPublicState();
     expect(state.currentTicket).toBeDefined();
-    expect(state.currentTicket!.status).toBe("CALLED");
+    expect(state.currentTicket!.status).toBe(TICKET_STATUS.CALLED);
   });
 
   it("B1.4.3 - getPublicState - Recent Calls with Current Ticket (reaches max)", () => {

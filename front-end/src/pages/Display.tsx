@@ -8,7 +8,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { TICKET_STATUS } from "shared-code";
+import { TICKET_STATUS, TICKET_TYPE } from "shared-code";
 import { useQueueContext } from "../contexts";
 
 export function Display() {
@@ -161,7 +161,7 @@ export function Display() {
                         fontWeight: 700,
                         fontSize: "1rem",
                         bgcolor:
-                          ticket.type === "PRIORITY"
+                          ticket.type === TICKET_TYPE.PRIORITY
                             ? "warning.main"
                             : "primary.main",
                         color: "white",

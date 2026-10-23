@@ -1,12 +1,12 @@
-import type { Ticket } from "shared-code";
+import { TICKET_STATUS, TICKET_TYPE, type Ticket } from "shared-code";
 import { describe, expect, it } from "vitest";
 import { timePropSort } from "./timePropSort";
 
 function makeTicket(overrides: Partial<Ticket> = {}): Ticket {
   return {
     id: "T1",
-    type: "PRIORITY",
-    status: "ISSUED",
+    type: TICKET_TYPE.PRIORITY,
+    status: TICKET_STATUS.ISSUED,
     callCount: 0,
     createdAt: new Date(),
     ...overrides,

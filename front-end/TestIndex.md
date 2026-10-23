@@ -15,40 +15,35 @@ All front-end tests use `vitest` with `jsdom` environment. Tests live alongside 
 - **Assertion**: "Priority Ticket" text is visible.
 - **Assertion**: Both card components are rendered and clickable.
 
-#### Test F1.1.2: Totem Redirects When Not Authenticated
-
-- **Setup**: Render `<Totem />` with no auth (role undefined).
-- **Assertion**: User is redirected to `/login` (verify `useNavigate` was called with `/login`).
-
-#### Test F1.1.3: Totem — Conventional Ticket Issue
+#### Test F1.1.2: Totem — Conventional Ticket Issue
 
 - **Setup**: Render `<Totem />`, click "Standard Ticket" card.
 - **Assertion**: `issueTicketRequest` is called with `{ ticketType: "CONVENTIONAL" }`.
 - **Assertion**: Success snackbar alert is shown.
 
-#### Test F1.1.4: Totem — Priority Ticket Issue
+#### Test F1.1.3: Totem — Priority Ticket Issue
 
 - **Setup**: Render `<Totem />`, click "Priority Ticket" card.
 - **Assertion**: `issueTicketRequest` is called with `{ ticketType: "PRIORITY" }`.
 - **Assertion**: Success snackbar alert is shown.
 
-#### Test F1.1.5: Totem — Shows Waiting Counts
+#### Test F1.1.4: Totem — Shows Waiting Counts
 
 - **Setup**: Provide queue context with `waitingTickets: { CONVENTIONAL: 5, PRIORITY: 3 }`.
 - **Assertion**: "5 people waiting" text is visible on Standard card.
 - **Assertion**: "3 people waiting" text is visible on Priority card.
 
-#### Test F1.1.6: Totem — Queue Summary Chips
+#### Test F1.1.5: Totem — Queue Summary Chips
 
 - **Assertion**: Chip showing "Standard: 5" is rendered.
 - **Assertion**: Chip showing "Priority: 3" is rendered.
 
-#### Test F1.1.7: Totem — Card Disabled During Mutation
+#### Test F1.1.6: Totem — Card Disabled During Mutation
 
 - **Setup**: Click "Standard Ticket" → mutation is pending.
 - **Assertion**: Both cards have `opacity: 0.7` and `pointerEvents: "none"`.
 
-#### Test F1.1.8: Totem — Loading State
+#### Test F1.1.7: Totem — Loading State
 
 - **Setup**: Provide queue context with `isLoading: true`.
 - **Assertion**: "Loading..." text is rendered.
@@ -124,14 +119,37 @@ All front-end tests use `vitest` with `jsdom` environment. Tests live alongside 
 - **Assertion**: "PRIORITY • Call #1" text is visible.
 - **Assertion**: "Called" status text is shown.
 
-#### Test F1.2.14: Desk — Action Button Calls Correct Mutation
+#### Test F1.2.14: Desk — Call Next Button Calls Correct Mutation
 
-- **Setup**: Render `<Desk />` with a CALLED ticket.
+- **Setup**: Render `<Desk />` with no current ticket.
 - **Action**: Click "Call Next".
 - **Assertion**: `callNextRequest` is called.
-- **Assertion**: `currentTicketQuery.refetch` is called after success.
 
-#### Test F1.2.15: Desk — Requeue Input and Button
+#### Test F1.2.15: Desk — Repeat Call Button Calls Correct Mutation
+
+- **Setup**: Render `<Desk />` with a CALLED ticket.
+- **Action**: Click "Repeat Call".
+- **Assertion**: `repeatCallRequest` is called.
+
+#### Test F1.2.16: Desk — Mark Absent Button Calls Correct Mutation
+
+- **Setup**: Render `<Desk />` with a CALLED ticket.
+- **Action**: Click "Mark Absent".
+- **Assertion**: `markAbsentRequest` is called.
+
+#### Test F1.2.17: Desk — Start Service Button Calls Correct Mutation
+
+- **Setup**: Render `<Desk />` with a CALLED ticket.
+- **Action**: Click "Start Service".
+- **Assertion**: `startServiceRequest` is called.
+
+#### Test F1.2.18: Desk — Complete Button Calls Correct Mutation
+
+- **Setup**: Render `<Desk />` with an IN_PROGRESS ticket.
+- **Action**: Click "Complete".
+- **Assertion**: `completeRequest` is called.
+
+#### Test F1.2.19: Desk — Requeue Input and Button
 
 - **Setup**: Render `<Desk />`.
 - **Action**: Type "PRI-001" into requeue input, click requeue button.
@@ -139,16 +157,11 @@ All front-end tests use `vitest` with `jsdom` environment. Tests live alongside 
 - **Assertion**: Input is cleared after success.
 - **Assertion**: Success snackbar is shown.
 
-#### Test F1.2.16: Desk — Requeue Button Disabled When Input Empty
+#### Test F1.2.20: Desk — Requeue Button Disabled When Input Empty
 
 - **Assertion**: Requeue icon button is disabled when text input is empty.
 
-#### Test F1.2.17: Desk — Redirects When Not Authenticated
-
-- **Setup**: Render `<Desk />` with no auth.
-- **Assertion**: User is redirected to `/login`.
-
-#### Test F1.2.18: Desk — Waiting Counts Displayed
+#### Test F1.2.21: Desk — Waiting Counts Displayed
 
 - **Setup**: Provide queue context with `waitingTickets: { CONVENTIONAL: 4, PRIORITY: 2 }`.
 - **Assertion**: Chip "Standard: 4" is rendered.
@@ -351,11 +364,6 @@ All front-end tests use `vitest` with `jsdom` environment. Tests live alongside 
 - **Setup**: Render `QueueProvider` with mocked fetch returning queue data.
 - **Assertion**: `useQueueContext().queue` returns the queue data.
 - **Assertion**: `useQueueContext().isLoading` transitions from `true` to `false`.
-
-#### Test F1.7.5: QueueContext — Refetch Clears Data
-
-- **Setup**: Call `clearData()` from queue context.
-- **Assertion**: Socket is disconnected.
 
 ---
 

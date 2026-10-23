@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { QueueState } from "shared-code";
+import { TICKET_STATUS, TICKET_TYPE, type QueueState } from "shared-code";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { loadState, saveState } from "./jsonStorage";
 
@@ -11,8 +11,8 @@ function createTempState(): QueueState {
     tickets: [
       {
         id: "PRI-001",
-        type: "PRIORITY",
-        status: "CALLED",
+        type: TICKET_TYPE.PRIORITY,
+        status: TICKET_STATUS.CALLED,
         deskId: "Desk 1",
         callCount: 1,
         createdAt: new Date("2026-01-01T00:00:00Z"),
@@ -20,8 +20,8 @@ function createTempState(): QueueState {
       },
       {
         id: "CON-002",
-        type: "CONVENTIONAL",
-        status: "ISSUED",
+        type: TICKET_TYPE.CONVENTIONAL,
+        status: TICKET_STATUS.ISSUED,
         callCount: 0,
         createdAt: new Date("2026-01-02T00:00:00Z"),
       },
@@ -57,7 +57,7 @@ describe("jsonStorage", () => {
     expect(loaded.sequences.PRIORITY).toBe(7);
     expect(loaded.tickets).toHaveLength(2);
     expect(loaded.tickets[0]!.id).toBe("PRI-001");
-    expect(loaded.tickets[0]!.status).toBe("CALLED");
+    expect(loaded.tickets[0]!.status).toBe(TICKET_STATUS.CALLED);
     expect(loaded.tickets[0]!.calledAt).toBeInstanceOf(Date);
     expect(loaded.tickets[0]!.calledAt!.toISOString()).toBe(
       "2026-01-01T01:00:00.000Z",
@@ -95,22 +95,22 @@ describe("jsonStorage", () => {
       tickets: [
         {
           id: "T1",
-          type: "PRIORITY",
-          status: "ISSUED",
+          type: TICKET_TYPE.PRIORITY,
+          status: TICKET_STATUS.ISSUED,
           callCount: 0,
           createdAt: new Date("2026-01-01T00:00:00Z"),
         },
         {
           id: "T2",
-          type: "CONVENTIONAL",
-          status: "ISSUED",
+          type: TICKET_TYPE.CONVENTIONAL,
+          status: TICKET_STATUS.ISSUED,
           callCount: 0,
           createdAt: new Date("2026-01-02T00:00:00.000Z"),
         },
         {
           id: "T3",
-          type: "PRIORITY",
-          status: "ISSUED",
+          type: TICKET_TYPE.PRIORITY,
+          status: TICKET_STATUS.ISSUED,
           callCount: 0,
           createdAt: new Date("2026-01-03T00:00:00+00:00"),
         },

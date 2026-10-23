@@ -1,5 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import {
+  TEST_DESK_1_ACCOUNT,
+  TEST_TOTEM_ACCOUNT,
+  USER_ROLE,
+} from "shared-code";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { JWT_SECRET } from "../../testSetup";
 import { requireRole, verifyJwt } from "./authMiddleware";
@@ -56,7 +61,11 @@ describe("authMiddleware", () => {
 
     it("B2.2.3 - Valid Token Attaches User", () => {
       const token = jwt.sign(
-        { sub: "desk-1", role: "DESK", deskId: "Desk 1" },
+        {
+          sub: TEST_DESK_1_ACCOUNT.subject,
+          role: USER_ROLE.DESK,
+          deskId: TEST_DESK_1_ACCOUNT.deskId,
+        },
         JWT_SECRET,
         { expiresIn: "1h" },
       );
@@ -66,8 +75,8 @@ describe("authMiddleware", () => {
 
       verifyJwt(req, res, next);
 
-      expect(req.user?.sub).toBe("desk-1");
-      expect(req.user?.role).toBe("DESK");
+      expect(req.user?.sub).toBe(TEST_DESK_1_ACCOUNT.subject);
+      expect(req.user?.role).toBe(USER_ROLE.DESK);
       expect(req.user?.deskId).toBe("Desk 1");
       expect(next).toHaveBeenCalled();
       expect(res.status).not.toHaveBeenCalled();
@@ -77,12 +86,12 @@ describe("authMiddleware", () => {
   describe("requireRole", () => {
     it("B2.2.4 - Allowed Role", () => {
       const req = createMockReq({
-        user: { sub: "desk-1", role: "DESK" },
+        user: { sub: TEST_DESK_1_ACCOUNT.subject, role: USER_ROLE.DESK },
       });
       const res = createMockRes();
       const next = createMockNext();
 
-      const middleware = requireRole(["DESK"]);
+      const middleware = requireRole([USER_ROLE.DESK]);
       middleware(req, res, next);
 
       expect(next).toHaveBeenCalled();
@@ -91,11 +100,11 @@ describe("authMiddleware", () => {
 
     it("B2.2.5 - Forbidden Role", () => {
       const req = createMockReq({
-        user: { sub: "totem-main", role: "TOTEM" },
+        user: { sub: TEST_TOTEM_ACCOUNT.subject, role: USER_ROLE.TOTEM },
       });
       const res = createMockRes();
 
-      const middleware = requireRole(["DESK"]);
+      const middleware = requireRole([USER_ROLE.DESK]);
       middleware(req, res, createMockNext());
 
       expect(res.status).toHaveBeenCalledWith(403);
@@ -106,7 +115,7 @@ describe("authMiddleware", () => {
       const req = createMockReq({ user: undefined });
       const res = createMockRes();
 
-      const middleware = requireRole(["DESK"]);
+      const middleware = requireRole([USER_ROLE.DESK]);
       middleware(req, res, createMockNext());
 
       expect(res.status).toHaveBeenCalledWith(401);

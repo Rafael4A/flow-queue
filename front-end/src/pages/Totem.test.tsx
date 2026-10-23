@@ -1,21 +1,12 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router";
-import type { AuthPayload } from "shared-code";
+import { TICKET_TYPE, type PublicQueueView } from "shared-code";
 import { describe, expect, it, vi } from "vitest";
-import { AuthContext, QueueContext, SocketProvider } from "../contexts";
+import { QueueContext, SocketProvider } from "../contexts";
 import { Totem } from "./Totem";
 
-const mockNavigate = vi.fn();
 const mockIssueTicket = vi.fn();
-
-vi.mock("react-router", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("react-router")>();
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
 
 vi.mock("../contexts/useSnackAlert", () => ({
   useSnackAlert: () => ({ openAlert: vi.fn() }),
@@ -32,15 +23,12 @@ vi.mock("socket.io-client", () => ({
 
 function renderWithProviders(
   ui: React.ReactElement,
-  auth: AuthPayload = {
-    sub: "totem-main",
-    role: "TOTEM",
-  },
-  queue = {
+  queue: PublicQueueView = {
     currentTicket: undefined,
     recentCalls: [],
     waitingTickets: { CONVENTIONAL: 0, PRIORITY: 0 },
   },
+  isLoading = false,
 ) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -50,18 +38,16 @@ function renderWithProviders(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <SocketProvider>
-          <AuthContext value={{ auth }}>
-            <QueueContext
-              value={{
-                queue,
-                isLoading: false,
-                refetch: () => {},
-                clearData: () => {},
-              }}
-            >
-              {ui}
-            </QueueContext>
-          </AuthContext>
+          <QueueContext
+            value={{
+              queue,
+              isLoading,
+              refetch: () => {},
+              clearData: () => {},
+            }}
+          >
+            {ui}
+          </QueueContext>
         </SocketProvider>
       </BrowserRouter>
     </QueryClientProvider>,
@@ -75,54 +61,65 @@ describe("Totem", () => {
     expect(screen.getByText("Priority Ticket")).toBeInTheDocument();
   });
 
-  it("F1.1.2 - Totem Redirects When Not Authenticated", () => {
+  it("F1.1.2 - Totem - Conventional Ticket Issue", async () => {
+    vi.spyOn(globalThis, "fetch");
+    renderWithProviders(<Totem />);
+
+    await waitFor(() => {
+      const cards = screen.getAllByRole("button");
+
+      fireEvent.click(cards[0]);
+    });
+
+    expect(fetch).toHaveBeenCalledWith("/api/totem/tickets/issue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ticketType: TICKET_TYPE.CONVENTIONAL }),
+      credentials: "include",
+    });
+  });
+
+  it("F1.1.3 - Totem - Priority Ticket Issue", async () => {
+    vi.spyOn(globalThis, "fetch");
+    renderWithProviders(<Totem />);
+
+    await waitFor(() => {
+      const cards = screen.getAllByRole("button");
+
+      fireEvent.click(cards[1]);
+    });
+
+    expect(fetch).toHaveBeenCalledWith("/api/totem/tickets/issue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ticketType: TICKET_TYPE.PRIORITY }),
+      credentials: "include",
+    });
+  });
+
+  it("F1.1.4 - Totem - Shows Waiting Counts", () => {
     renderWithProviders(<Totem />, {
-      sub: "desk-1",
-      role: "DESK",
-      deskId: "Desk 1",
+      currentTicket: undefined,
+      recentCalls: [],
+      waitingTickets: { CONVENTIONAL: 5, PRIORITY: 3 },
     });
-    expect(mockNavigate).toHaveBeenCalledWith("/login");
+
+    expect(screen.getByText("5 people waiting")).toBeInTheDocument();
+    expect(screen.getByText("3 people waiting")).toBeInTheDocument();
   });
 
-  it("F1.1.5 - Totem - Shows Waiting Counts", () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          currentTicket: undefined,
-          recentCalls: [],
-          waitingTickets: { CONVENTIONAL: 5, PRIORITY: 3 },
-        }),
+  it("F1.1.5 - Totem - Queue Summary Chips", () => {
+    renderWithProviders(<Totem />, {
+      currentTicket: undefined,
+      recentCalls: [],
+      waitingTickets: { CONVENTIONAL: 5, PRIORITY: 3 },
     });
 
-    renderWithProviders(<Totem />);
-
-    waitFor(() => {
-      expect(screen.getByText("5 people waiting")).toBeInTheDocument();
-      expect(screen.getByText("3 people waiting")).toBeInTheDocument();
-    });
+    expect(screen.getByText("Standard: 5")).toBeInTheDocument();
+    expect(screen.getByText("Priority: 3")).toBeInTheDocument();
   });
 
-  it("F1.1.6 - Totem - Queue Summary Chips", () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          currentTicket: undefined,
-          recentCalls: [],
-          waitingTickets: { CONVENTIONAL: 5, PRIORITY: 3 },
-        }),
-    });
-
-    renderWithProviders(<Totem />);
-
-    waitFor(() => {
-      expect(screen.getByText("Standard: 5")).toBeInTheDocument();
-      expect(screen.getByText("Priority: 3")).toBeInTheDocument();
-    });
-  });
-
-  it("F1.1.7 - Card Disabled During Mutation", async () => {
+  it("F1.1.6 - Card Disabled During Mutation", () => {
     mockIssueTicket.mockReturnValue({
       promise: {
         then: vi.fn(),
@@ -131,7 +128,7 @@ describe("Totem", () => {
 
     renderWithProviders(<Totem />);
 
-    const cards = document.querySelectorAll("[role='button'], button");
+    const cards = screen.getAllByRole("button");
 
     fireEvent.click(cards[0] as Element);
 
@@ -139,5 +136,11 @@ describe("Totem", () => {
       expect(cards[0]).toBeDisabled();
       expect(cards[1]).toBeDisabled();
     });
+  });
+
+  it("F1.1.7 - Totem - Loading State", () => {
+    renderWithProviders(<Totem />, {}, true);
+
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 });
