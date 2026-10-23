@@ -20,13 +20,22 @@ describe("AuthContext", () => {
   it("F1.7.1 - Provides Auth from Cookie", () => {
     const mockToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZXNrLTEiLCJyb2xlIjoiREVTSyIsImRlc2tJZCI6IkRlc2sgMSJ9.a_twN9vKLXnspR4njBADJP4HGP_Suc-9Fy81towNFy8";
+
     renderWithProvider(<TestComponent />, `token=${mockToken}`);
-    expect(screen.getByTestId("auth")).toBeInTheDocument();
+
+    expect(screen.getByTestId("auth")).toHaveTextContent(
+      JSON.stringify({
+        sub: "desk-1",
+        role: "DESK",
+        deskId: "Desk 1",
+      }),
+    );
   });
 
   it("F1.7.2 - No Auth When No Cookie", () => {
     renderWithProvider(<TestComponent />, "");
-    expect(screen.getByTestId("auth")).toBeInTheDocument();
+
+    expect(screen.getByTestId("auth")).toHaveTextContent("");
   });
 
   it("F1.7.3 - Throws Outside Provider", () => {

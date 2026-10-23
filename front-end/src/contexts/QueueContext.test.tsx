@@ -47,20 +47,9 @@ describe("QueueContext", () => {
   });
 
   it("F1.7.4 - Provides Queue Data", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            currentTicket: undefined,
-            recentCalls: [],
-            waitingTickets: { CONVENTIONAL: 0, PRIORITY: 0 },
-          }),
-      }),
-    );
-
     renderWithProviders(<TestComponent />);
+
+    expect(screen.getByTestId("loading")).toHaveTextContent("true");
 
     await screen.findByTestId("queue");
 

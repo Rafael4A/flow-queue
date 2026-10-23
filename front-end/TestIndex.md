@@ -19,13 +19,11 @@ All front-end tests use `vitest` with `jsdom` environment. Tests live alongside 
 
 - **Setup**: Render `<Totem />`, click "Standard Ticket" card.
 - **Assertion**: `issueTicketRequest` is called with `{ ticketType: "CONVENTIONAL" }`.
-- **Assertion**: Success snackbar alert is shown.
 
 #### Test F1.1.3: Totem — Priority Ticket Issue
 
 - **Setup**: Render `<Totem />`, click "Priority Ticket" card.
 - **Assertion**: `issueTicketRequest` is called with `{ ticketType: "PRIORITY" }`.
-- **Assertion**: Success snackbar alert is shown.
 
 #### Test F1.1.4: Totem — Shows Waiting Counts
 
@@ -41,7 +39,7 @@ All front-end tests use `vitest` with `jsdom` environment. Tests live alongside 
 #### Test F1.1.6: Totem — Card Disabled During Mutation
 
 - **Setup**: Click "Standard Ticket" → mutation is pending.
-- **Assertion**: Both cards have `opacity: 0.7` and `pointerEvents: "none"`.
+- **Assertion**: Both cards are disabled.
 
 #### Test F1.1.7: Totem — Loading State
 
@@ -155,7 +153,6 @@ All front-end tests use `vitest` with `jsdom` environment. Tests live alongside 
 - **Action**: Type "PRI-001" into requeue input, click requeue button.
 - **Assertion**: `requeueRequest` is called with `{ ticketId: "PRI-001" }`.
 - **Assertion**: Input is cleared after success.
-- **Assertion**: Success snackbar is shown.
 
 #### Test F1.2.20: Desk — Requeue Button Disabled When Input Empty
 
@@ -201,7 +198,6 @@ All front-end tests use `vitest` with `jsdom` environment. Tests live alongside 
 
 - **Setup**: Provide `recentCalls: [ticketA, ticketB, ticketC]`.
 - **Assertion**: 3 rows are rendered in the recent calls list.
-- **Assertion**: Each row shows ticket ID, type, and calledAt time.
 
 #### Test F1.3.7: Display — "No Recent Calls" When Empty
 

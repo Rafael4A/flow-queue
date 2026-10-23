@@ -44,6 +44,7 @@ describe("Display", () => {
     await screen.findByText("Currently Serving");
 
     expect(screen.getByText("Currently Serving")).toBeInTheDocument();
+    expect(screen.getByText("—")).toBeInTheDocument();
   });
 
   it("F1.3.2 - Shows Current Ticket", async () => {
@@ -153,10 +154,15 @@ describe("Display", () => {
 
     renderWithProviders(<Display />);
 
-    await screen.findByText("Waiting - Standard");
+    const waitingStandard = await screen.findByText("Waiting - Standard");
+    const waitingPriority = await screen.findByText("Waiting - Priority");
 
-    expect(screen.getByText("Waiting - Standard")).toBeInTheDocument();
-    expect(screen.getByText("Waiting - Priority")).toBeInTheDocument();
+    expect(waitingStandard.parentElement).toHaveTextContent(
+      "Waiting - Standard5",
+    );
+    expect(waitingPriority.parentElement).toHaveTextContent(
+      "Waiting - Priority3",
+    );
   });
 
   it("F1.3.6 - Recent Calls List", async () => {
@@ -205,6 +211,9 @@ describe("Display", () => {
     const tickets = await screen.findAllByText(/CON-001|PRI-002|CON-003/);
 
     expect(tickets).toHaveLength(3);
+    expect(tickets[0]).toHaveTextContent("CON-001");
+    expect(tickets[1]).toHaveTextContent("PRI-002");
+    expect(tickets[2]).toHaveTextContent("CON-003");
   });
 
   it("F1.3.7 - No Recent Calls When Empty", async () => {
@@ -266,5 +275,7 @@ describe("Display", () => {
     );
 
     renderWithProviders(<Display />);
+
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 });

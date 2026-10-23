@@ -51,26 +51,32 @@ describe("queueService - B1.1 Priority Scheduling", () => {
     const t1 = callNext("Desk 1");
     expect(t1!.id).toBe("PRI-001");
     expect(t1!.status).toBe(TICKET_STATUS.CALLED);
+    expect(storageMock.state.priorityCounter).toBe(1);
 
     const t2 = callNext("Desk 2");
     expect(t2!.id).toBe("PRI-002");
     expect(t2!.status).toBe(TICKET_STATUS.CALLED);
+    expect(storageMock.state.priorityCounter).toBe(2);
 
     const t3 = callNext("Desk 3");
     expect(t3!.id).toBe("CON-001");
     expect(t3!.status).toBe(TICKET_STATUS.CALLED);
+    expect(storageMock.state.priorityCounter).toBe(0);
 
     const t4 = callNext("Desk 4");
     expect(t4!.id).toBe("PRI-003");
     expect(t4!.status).toBe(TICKET_STATUS.CALLED);
+    expect(storageMock.state.priorityCounter).toBe(1);
 
     const t5 = callNext("Desk 5");
     expect(t5!.id).toBe("PRI-004");
     expect(t5!.status).toBe(TICKET_STATUS.CALLED);
+    expect(storageMock.state.priorityCounter).toBe(2);
 
     const t6 = callNext("Desk 6");
     expect(t6!.id).toBe("CON-002");
     expect(t6!.status).toBe(TICKET_STATUS.CALLED);
+    expect(storageMock.state.priorityCounter).toBe(0);
   });
 
   it("B1.1.2 - 2:1 Ratio with Mixed Arrival Order", () => {
@@ -82,18 +88,23 @@ describe("queueService - B1.1 Priority Scheduling", () => {
 
     const t1 = callNext("Desk 1");
     expect(t1!.id).toBe("PRI-001");
+    expect(storageMock.state.priorityCounter).toBe(1);
 
     const t2 = callNext("Desk 2");
     expect(t2!.id).toBe("PRI-002");
+    expect(storageMock.state.priorityCounter).toBe(2);
 
     const t3 = callNext("Desk 3");
     expect(t3!.id).toBe("CON-001");
+    expect(storageMock.state.priorityCounter).toBe(0);
 
     const t4 = callNext("Desk 4");
     expect(t4!.id).toBe("PRI-003");
+    expect(storageMock.state.priorityCounter).toBe(1);
 
     const t5 = callNext("Desk 5");
     expect(t5!.id).toBe("CON-002");
+    expect(storageMock.state.priorityCounter).toBe(0);
   });
 
   it("B1.1.3 - Priority Queue Only (No Conventional Tickets)", () => {
@@ -103,12 +114,15 @@ describe("queueService - B1.1 Priority Scheduling", () => {
 
     const t1 = callNext("Desk 1");
     expect(t1!.id).toBe("PRI-001");
+    expect(storageMock.state.priorityCounter).toBe(1);
 
     const t2 = callNext("Desk 2");
     expect(t2!.id).toBe("PRI-002");
+    expect(storageMock.state.priorityCounter).toBe(2);
 
     const t3 = callNext("Desk 3");
     expect(t3!.id).toBe("PRI-003");
+    expect(storageMock.state.priorityCounter).toBe(2);
   });
 
   it("B1.1.4 - Conventional Queue Only (No Priority Tickets)", () => {
@@ -154,10 +168,6 @@ describe("queueService - B1.1 Priority Scheduling", () => {
 
   it("B1.1.8 - Priority Counter Persistence Across callNext Calls", () => {
     issueTicket(TICKET_TYPE.PRIORITY);
-    issueTicket(TICKET_TYPE.CONVENTIONAL);
-    issueTicket(TICKET_TYPE.PRIORITY);
-    issueTicket(TICKET_TYPE.PRIORITY);
-    issueTicket(TICKET_TYPE.PRIORITY);
     issueTicket(TICKET_TYPE.PRIORITY);
 
     const t1 = callNext("Desk 1");
@@ -167,9 +177,15 @@ describe("queueService - B1.1 Priority Scheduling", () => {
     expect(t2!.id).toBe("PRI-002");
     expect(storageMock.state.priorityCounter).toBe(2);
 
+    issueTicket(TICKET_TYPE.CONVENTIONAL);
+
     const t3 = callNext("Desk 3");
     expect(t3!.id).toBe("CON-001");
     expect(storageMock.state.priorityCounter).toBe(0);
+
+    issueTicket(TICKET_TYPE.PRIORITY);
+    issueTicket(TICKET_TYPE.PRIORITY);
+    issueTicket(TICKET_TYPE.PRIORITY);
 
     const t4 = callNext("Desk 4");
     expect(t4!.id).toBe("PRI-003");
